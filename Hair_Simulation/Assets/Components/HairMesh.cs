@@ -35,7 +35,7 @@ public class HairMesh : MonoBehaviour
             Vector3 parallelToCamera = Camera.transform.forward;
 
             // create an offset from those two vertices so we can make a rectangle (the thickness of the strand)
-            Vector3 offset = Vector3.Cross(vertexToPosition - vertexFromPosition, parallelToCamera).normalized * 0.05f;
+            Vector3 offset = Vector3.Cross(vertexToPosition - vertexFromPosition, parallelToCamera).normalized * Constants.StraightHairThickness;
 
             // calculate points for rectangle
             Vector3 v1 = vertexFromPosition - offset;
