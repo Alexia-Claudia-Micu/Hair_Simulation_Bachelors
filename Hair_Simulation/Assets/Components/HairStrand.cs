@@ -10,7 +10,6 @@ public class HairStrand : MonoBehaviour
     public List<StrandVertex> Vertices;
     public List<StrandSpring> Springs;
 
-    private ComputeShader hairSolver;
     private ComputeBuffer vertexBuffer;
     private ComputeBuffer springBuffer;
     private ComputeBuffer volumeBuffer;
@@ -20,13 +19,26 @@ public class HairStrand : MonoBehaviour
         this.Vertices = new List<StrandVertex>();
         this.Springs = new List<StrandSpring>();
 
-        InitializeHairStrand();
+        // Example values
+        Vector3 rootPosition = new Vector3(0, 6f, 0);
+        float segmentLength = 0.6f;
+        int numberOfVertices = 11;
+        float curlinessFactor = 0.4f;
+
+        InitializeHairStrand(rootPosition, segmentLength, numberOfVertices, curlinessFactor);
         InitializeComputeBuffers();
     }
 
-    void InitializeHairStrand()
+    public void InitializeHairStrand(Vector3 rootPosition, float segmentLength, int numberOfVertices, float curlinessFactor)
     {
-        CurlyStrand();
+        // Ensure the lists are properly initialized before use
+        if (Vertices == null) Vertices = new List<StrandVertex>();
+        if (Springs == null) Springs = new List<StrandSpring>();
+
+        Vertices.Clear();
+        Springs.Clear();
+
+        GenerateStrand(rootPosition, segmentLength, numberOfVertices, curlinessFactor);
 
         for (int i = 0; i < Vertices.Count - 1; i++)
         {
@@ -34,34 +46,26 @@ public class HairStrand : MonoBehaviour
         }
     }
 
-    void CurlyStrand()
+    void GenerateStrand(Vector3 rootPosition, float segmentLength, int numberOfVertices, float curlinessFactor)
     {
-        StrandVertex vertex0 = new StrandVertex(new Vector3(0, 6f, 0), Constants.HairMass, true); this.Vertices.Add(vertex0);
-        StrandVertex vertex1 = new StrandVertex(new Vector3(0.4f, 5.6f, 0), Constants.HairMass); this.Vertices.Add(vertex1);
-        StrandVertex vertex2 = new StrandVertex(new Vector3(0, 5.2f, 0), Constants.HairMass); this.Vertices.Add(vertex2);
-        StrandVertex vertex3 = new StrandVertex(new Vector3(-0.4f, 4.8f, 0), Constants.HairMass); this.Vertices.Add(vertex3);
-        StrandVertex vertex4 = new StrandVertex(new Vector3(0.0f, 4.4f, 0), Constants.HairMass); this.Vertices.Add(vertex4);
-        StrandVertex vertex5 = new StrandVertex(new Vector3(0.4f, 4.0f, 0), Constants.HairMass); this.Vertices.Add(vertex5);
-        StrandVertex vertex6 = new StrandVertex(new Vector3(0.0f, 3.6f, 0), Constants.HairMass); this.Vertices.Add(vertex6);
-        StrandVertex vertex7 = new StrandVertex(new Vector3(-0.4f, 3.2f, 0), Constants.HairMass); this.Vertices.Add(vertex7);
-        StrandVertex vertex8 = new StrandVertex(new Vector3(0.0f, 2.8f, 0), Constants.HairMass); this.Vertices.Add(vertex8);
-        StrandVertex vertex9 = new StrandVertex(new Vector3(0.4f, 2.4f, 0), Constants.HairMass); this.Vertices.Add(vertex9);
-        StrandVertex vertex10 = new StrandVertex(new Vector3(0.0f, 2.0f, 0), Constants.HairMass); this.Vertices.Add(vertex10);
-    }
+        Vector3 currentPosition = rootPosition;
+        bool isRoot = true;
 
-    void StraightStrand()
-    {
-        StrandVertex vertex0 = new StrandVertex(new Vector3(0, 6f, 0), Constants.HairMass, true); this.Vertices.Add(vertex0);
-        StrandVertex vertex1 = new StrandVertex(new Vector3(0, 5.4f, 0), Constants.HairMass); this.Vertices.Add(vertex1);
-        StrandVertex vertex2 = new StrandVertex(new Vector3(0, 4.8f, 0), Constants.HairMass); this.Vertices.Add(vertex2);
-        StrandVertex vertex3 = new StrandVertex(new Vector3(0, 4.2f, 0), Constants.HairMass); this.Vertices.Add(vertex3);
-        StrandVertex vertex4 = new StrandVertex(new Vector3(0, 3.6f, 0), Constants.HairMass); this.Vertices.Add(vertex4);
-        StrandVertex vertex5 = new StrandVertex(new Vector3(0, 3.0f, 0), Constants.HairMass); this.Vertices.Add(vertex5);
-        StrandVertex vertex6 = new StrandVertex(new Vector3(0, 2.4f, 0), Constants.HairMass); this.Vertices.Add(vertex6);
-        StrandVertex vertex7 = new StrandVertex(new Vector3(0, 1.8f, 0), Constants.HairMass); this.Vertices.Add(vertex7);
-        StrandVertex vertex8 = new StrandVertex(new Vector3(0, 1.2f, 0), Constants.HairMass); this.Vertices.Add(vertex8);
-        StrandVertex vertex9 = new StrandVertex(new Vector3(0, 0.6f, 0), Constants.HairMass); this.Vertices.Add(vertex9);
-        StrandVertex vertex10 = new StrandVertex(new Vector3(0, 0f, 0), Constants.HairMass); this.Vertices.Add(vertex10);
+        for (int i = 0; i < numberOfVertices; i++)
+        {
+            // Add slight variation for curly effect
+            float offsetX = Mathf.Sin(i * Mathf.PI * 0.5f) * curlinessFactor;
+            float offsetZ = Mathf.Cos(i * Mathf.PI * 0.5f) * curlinessFactor;
+            Vector3 offset = new Vector3(offsetX, 0, offsetZ);
+
+            // Create a new vertex
+            StrandVertex newVertex = new StrandVertex(currentPosition + offset, Constants.HairMass, isRoot);
+            Vertices.Add(newVertex);
+
+            // Move to the next position in a straight downward line
+            currentPosition.y -= segmentLength;
+            isRoot = false;
+        }
     }
 
     void InitializeComputeBuffers()
@@ -69,8 +73,6 @@ public class HairStrand : MonoBehaviour
         vertexBuffer = new ComputeBuffer(Vertices.Count, sizeof(float) * 6);
         springBuffer = new ComputeBuffer(Springs.Count, sizeof(float) * 4);
         volumeBuffer = new ComputeBuffer(1, sizeof(float) * 3);  // For external forces like wind
-
-        hairSolver = Resources.Load<ComputeShader>("HairSolver");
     }
 
     void AddSpring(int from, int to)
@@ -103,7 +105,6 @@ public class HairStrand : MonoBehaviour
             else
             {
                 Vector3 gravityForce = Constants.Gravity * vertex.Mass;
-
                 Vector3 acceleration = gravityForce / vertex.Mass;
                 vertex.Velocity += acceleration * deltaTime;
                 vertex.Position += vertex.Velocity * deltaTime;
@@ -158,5 +159,4 @@ public class HairStrand : MonoBehaviour
         springBuffer.Release();
         volumeBuffer.Release();
     }
-
 }
