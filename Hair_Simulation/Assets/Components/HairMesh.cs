@@ -2,7 +2,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent (typeof(MeshFilter))]
+[RequireComponent(typeof(MeshFilter))]
 public class HairMesh : MonoBehaviour
 {
     public HairStrand Strand;
@@ -11,8 +11,8 @@ public class HairMesh : MonoBehaviour
 
     void Start()
     {
-        hairMesh = new Mesh ();
-        GetComponent<MeshFilter> ().mesh = hairMesh;
+        hairMesh = new Mesh();
+        GetComponent<MeshFilter>().mesh = hairMesh;
     }
 
     void Update()
@@ -27,29 +27,35 @@ public class HairMesh : MonoBehaviour
 
         for (int i = 0; i < Strand.Vertices.Count - 1; i++)
         {
-            // 2 vertices
+            // Hair segment vertices
             Vector3 vertexFromPosition = Strand.Vertices[i].Position;
             Vector3 vertexToPosition = Strand.Vertices[i + 1].Position;
 
-            // offset paralel to the camera so it's always the same thickness
+            // Offset perpendicular to the camera's view direction
             Vector3 parallelToCamera = Camera.transform.forward;
+            Vector3 direction = (vertexToPosition - vertexFromPosition).normalized;
+            Vector3 offset = Vector3.Cross(direction, parallelToCamera).normalized;
 
-            // create an offset from those two vertices so we can make a rectangle (the thickness of the strand)
-            Vector3 offset = Vector3.Cross(vertexToPosition - vertexFromPosition, parallelToCamera).normalized * Constants.StraightHairThickness;
+            // **Tapering Factor**: Prevents going to 0 by clamping
+            float taperFactor = 1.0f - ((float)i / (Strand.Vertices.Count - 1));
+            float clampedTaper = Mathf.Max(Constants.MinHairTaper, taperFactor); // Ensures min thickness
 
-            // calculate points for rectangle
-            Vector3 v1 = vertexFromPosition - offset;
-            Vector3 v2 = vertexFromPosition + offset;
-            Vector3 v3 = vertexToPosition - offset;
-            Vector3 v4 = vertexToPosition + offset;
+            // Adjusted thickness with tapering
+            float segmentThickness = Constants.HairThickness * clampedTaper;
 
-            // add vertices (positioned like a rectangle)
-            vertices.Add (v1);
-            vertices.Add (v2);
-            vertices.Add (v3);
-            vertices.Add (v4);
+            // Adjust vertex positions based on tapering
+            Vector3 v1 = vertexFromPosition - offset * segmentThickness;
+            Vector3 v2 = vertexFromPosition + offset * segmentThickness;
+            Vector3 v3 = vertexToPosition - offset * segmentThickness;
+            Vector3 v4 = vertexToPosition + offset * segmentThickness;
 
-            // Create triangles with the vertices
+            // Add vertices to the mesh
+            vertices.Add(v1);
+            vertices.Add(v2);
+            vertices.Add(v3);
+            vertices.Add(v4);
+
+            // Create triangles (two per quad)
             int startIndex = i * 4;
             triangles.Add(startIndex + 0);
             triangles.Add(startIndex + 2);
@@ -60,6 +66,7 @@ public class HairMesh : MonoBehaviour
             triangles.Add(startIndex + 3);
         }
 
+        // Update mesh data
         hairMesh.Clear();
         hairMesh.SetVertices(vertices);
         hairMesh.SetTriangles(triangles, 0);

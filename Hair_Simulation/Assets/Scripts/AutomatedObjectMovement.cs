@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ObjectMovement : MonoBehaviour
+public class AutomatedObjectMovement : MonoBehaviour
 {
     public float moveSpeed = 2f; // Speed of movement
     public float distance = 5f;  // Distance to move back and forth

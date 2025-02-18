@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class StrandSpring
 {
     public int VertexFrom;
@@ -12,12 +10,4 @@ public class StrandSpring
         this.VertexTo = VertexTo;
         this.Length = length;
     }
-
-    public StrandSpring()
-    {
-        this.VertexFrom=0;
-        this.VertexTo=0;
-        this.Length = 0;
-    }
-
 }
