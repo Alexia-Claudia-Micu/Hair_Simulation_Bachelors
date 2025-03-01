@@ -1,25 +1,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO: the strand is not initialized with all the correct parameters (defaults)
 public class HairCluster : MonoBehaviour
 {
-    public GameObject hairStrandPrefab; // Prefab containing HairStrand component
-    public int strandCount = 20; // Number of strands per cluster
-    public Vector3 clusterSize = new Vector3(0.2f, 0f, 0.2f); // Area in which strands are distributed
-
+    public GameObject hairStrandPrefab;
+    public GameObject sphere; // The moving object (emitter)
+    public int strandCount = 20;
     public float minSegmentLength = 0.4f;
     public float maxSegmentLength = 0.7f;
-    public int minVertices = 8;
-    public int maxVertices = 12;
+    public int minVertices = 3;
+    public int maxVertices = 5;
     public float minCurliness = 0.1f;
     public float maxCurliness = 0.5f;
 
     private List<HairStrand> strands = new List<HairStrand>();
+    private List<Vector3> localRootPositions = new List<Vector3>(); // Stores initial root offsets
 
     void Start()
     {
+        if (sphere == null)
+        {
+            Debug.LogError("Sphere object (emitter) is not assigned to HairCluster.");
+            return;
+        }
+
         GenerateHairCluster();
     }
+
 
     void GenerateHairCluster()
     {
@@ -31,27 +39,60 @@ public class HairCluster : MonoBehaviour
 
         for (int i = 0; i < strandCount; i++)
         {
-            // Generate a random position within the cluster area
-            Vector3 rootPosition = transform.position + new Vector3(
-                Random.Range(-clusterSize.x / 2, clusterSize.x / 2),
-                0, // Hair grows from the same height
-                Random.Range(-clusterSize.z / 2, clusterSize.z / 2)
-            );
+            // Get a random position on the sphere's surface
+            Vector3 rootPosition = GetRandomPointOnSphereSurface();
+            Vector3 localRootPosition = sphere.transform.InverseTransformPoint(rootPosition);
 
-            // Randomize strand properties
             float segmentLength = Random.Range(minSegmentLength, maxSegmentLength);
             int numberOfVertices = Random.Range(minVertices, maxVertices);
             float curlinessFactor = Random.Range(minCurliness, maxCurliness);
 
             // Instantiate hair strand
-            GameObject strandObject = Instantiate(hairStrandPrefab, rootPosition, Quaternion.identity, transform);
+            GameObject strandObject = Instantiate(hairStrandPrefab, Vector3.zero, Quaternion.identity);
             HairStrand hairStrand = strandObject.GetComponent<HairStrand>();
 
             if (hairStrand != null)
             {
+                hairStrand.emitter = sphere; // Attach emitter reference
                 hairStrand.InitializeHairStrand(rootPosition, segmentLength, numberOfVertices, curlinessFactor);
                 strands.Add(hairStrand);
+                localRootPositions.Add(localRootPosition); // Store relative position
             }
         }
     }
+
+    void FixedUpdate()
+    {
+        // Update each strand's root position based on the emitter's movement
+        for (int i = 0; i < strands.Count; i++)
+        {
+            if (strands[i] != null)
+            {
+                Vector3 newWorldRoot = sphere.transform.TransformPoint(localRootPositions[i]);
+                strands[i].UpdateRootPosition(newWorldRoot);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Generates a random point on the surface of the sphere.
+    /// </summary>
+    Vector3 GetRandomPointOnSphereSurface()
+    {
+        SphereCollider sphereCollider = sphere.GetComponent<SphereCollider>();
+        if (sphereCollider == null)
+        {
+            Debug.LogError("Sphere does not have a SphereCollider.");
+            return sphere.transform.position;
+        }
+
+        float sphereRadius = sphereCollider.radius * sphere.transform.lossyScale.x;
+
+        // Generate a random point on a unit sphere
+        Vector3 randomDirection = Random.onUnitSphere;
+
+        // Convert to world space by scaling with the sphere's radius and position
+        return sphere.transform.position + randomDirection * sphereRadius;
+    }
+
 }

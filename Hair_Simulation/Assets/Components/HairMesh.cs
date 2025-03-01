@@ -5,8 +5,11 @@ using UnityEngine;
 public class HairMesh : MonoBehaviour
 {
     public HairStrand Strand;
-    public Camera Camera;
     private Mesh hairMesh;
+
+    public int radialSegments = 4; // Number of vertices around each segment (more = smoother tube)
+    public float rootThickness = 0.05f; // Thickness at the root
+    public float tipThickness = 0.03f;  // Thickness at the tip
 
     void Start()
     {
@@ -14,10 +17,6 @@ public class HairMesh : MonoBehaviour
         {
             Debug.LogError("HairStrand reference is missing!");
             return;
-        }
-        if (Camera == null)
-        {
-            Camera = Camera.main; // Assign main camera if not set
         }
 
         hairMesh = new Mesh();
@@ -37,45 +36,53 @@ public class HairMesh : MonoBehaviour
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
 
-        float minThickness = Constants.HairThickness * 0.5f; // Ensures strands remain visible
-
         for (int i = 0; i < Strand.Vertices.Count - 1; i++)
         {
             // Hair segment start and end positions
             Vector3 vertexFromPosition = Strand.Vertices[i].Position;
             Vector3 vertexToPosition = Strand.Vertices[i + 1].Position;
+            Vector3 segmentDirection = (vertexToPosition - vertexFromPosition).normalized;
 
-            // Compute perpendicular direction relative to camera
-            Vector3 strandDirection = (vertexToPosition - vertexFromPosition).normalized;
-            Vector3 cameraDirection = Camera.transform.forward;
-            Vector3 perpendicularOffset = Vector3.Cross(strandDirection, cameraDirection).normalized;
+            // Generate a perpendicular basis for the tube shape
+            Vector3 perpendicular1 = Vector3.Cross(segmentDirection, Vector3.up).normalized;
+            Vector3 perpendicular2 = Vector3.Cross(segmentDirection, perpendicular1).normalized;
 
-            // Compute tapering factor and clamp it
-            float taperFactor = 1.0f - ((float)i / (Strand.Vertices.Count - 1));
-            float clampedTaper = Mathf.Max(Constants.MinHairTaper, taperFactor); // Ensures min taper
-            float segmentThickness = Mathf.Max(Constants.HairThickness * clampedTaper, minThickness);
+            if (perpendicular1 == Vector3.zero) perpendicular1 = Vector3.right; // Fix degeneracy
+            if (perpendicular2 == Vector3.zero) perpendicular2 = Vector3.forward; // Fix degeneracy
 
-            // Offset hair segment vertices to create a quad
-            Vector3 v1 = vertexFromPosition - perpendicularOffset * segmentThickness;
-            Vector3 v2 = vertexFromPosition + perpendicularOffset * segmentThickness;
-            Vector3 v3 = vertexToPosition - perpendicularOffset * segmentThickness;
-            Vector3 v4 = vertexToPosition + perpendicularOffset * segmentThickness;
+            // Compute tapering factor (interpolates between rootThickness and tipThickness)
+            float taperFactor = (float)i / (Strand.Vertices.Count - 1);
+            float taperedThickness = Mathf.Lerp(rootThickness, tipThickness, taperFactor);
 
-            // Add vertices to the mesh
-            vertices.Add(v1);
-            vertices.Add(v2);
-            vertices.Add(v3);
-            vertices.Add(v4);
+            // Generate circular cross-section with tapering
+            for (int j = 0; j < radialSegments; j++)
+            {
+                float angle = (j / (float)radialSegments) * Mathf.PI * 2;
+                Vector3 radialOffset = (perpendicular1 * Mathf.Cos(angle) + perpendicular2 * Mathf.Sin(angle)) * taperedThickness;
 
-            // Add triangles to connect the vertices into quads
-            int startIndex = i * 4;
-            triangles.Add(startIndex + 0);
-            triangles.Add(startIndex + 2);
-            triangles.Add(startIndex + 1);
+                vertices.Add(vertexFromPosition + radialOffset);
+                vertices.Add(vertexToPosition + radialOffset);
+            }
 
-            triangles.Add(startIndex + 1);
-            triangles.Add(startIndex + 2);
-            triangles.Add(startIndex + 3);
+            // Create triangles connecting cross-sections
+            int baseIndex = i * radialSegments * 2;
+            for (int j = 0; j < radialSegments; j++)
+            {
+                int nextJ = (j + 1) % radialSegments;
+
+                int v1 = baseIndex + j * 2;
+                int v2 = baseIndex + nextJ * 2;
+                int v3 = baseIndex + j * 2 + 1;
+                int v4 = baseIndex + nextJ * 2 + 1;
+
+                triangles.Add(v1);
+                triangles.Add(v3);
+                triangles.Add(v2);
+
+                triangles.Add(v2);
+                triangles.Add(v3);
+                triangles.Add(v4);
+            }
         }
 
         // Update the mesh data

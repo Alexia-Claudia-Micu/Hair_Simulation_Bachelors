@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+// TODO: fix spinning
+
 public class HairStrand : MonoBehaviour
 {
     public GameObject emitter;
@@ -150,6 +152,20 @@ public class HairStrand : MonoBehaviour
             float restLength = Springs[i - 1].Length;
 
             Vertices[i].Position = previousPosition + direction * restLength;
+        }
+    }
+
+    public void UpdateRootPosition(Vector3 newRootPosition)
+    {
+        if (Vertices.Count > 0)
+        {
+            Vector3 rootOffset = newRootPosition - Vertices[0].Position;
+
+            // Update all vertices based on the root movement
+            for (int i = 0; i < Vertices.Count; i++)
+            {
+                Vertices[i].Position += rootOffset;
+            }
         }
     }
 
