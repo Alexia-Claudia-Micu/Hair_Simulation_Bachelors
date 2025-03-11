@@ -38,8 +38,11 @@ Thumbs.db
 # Crashlytics generated files
 crashlytics-build.properties
 
+# Ignore TextMesh Pro assets
+Assets/TextMesh Pro/
+
 # Visual Studio .vs folder (stores temporary files)
-.vs/
+.vs
 
 # Uncomment if you want to ignore the asset store tools plugin
 # /[Aa]ssets/AssetStoreTools*
