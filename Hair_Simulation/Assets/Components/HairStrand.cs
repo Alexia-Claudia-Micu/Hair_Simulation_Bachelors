@@ -12,24 +12,6 @@ public class HairStrand : MonoBehaviour
     public List<StrandVertex> Vertices;
     public List<StrandSpring> Springs;
 
-    private ComputeBuffer vertexBuffer;
-    private ComputeBuffer springBuffer;
-    private ComputeBuffer volumeBuffer;
-
-    void Start()
-    {
-        this.Vertices = new List<StrandVertex>();
-        this.Springs = new List<StrandSpring>();
-
-        // Example values
-        Vector3 rootPosition = new Vector3(0, 6f, 0);
-        float segmentLength = 0.6f;
-        int numberOfVertices = 11;
-        float curlinessFactor = 0.4f;
-
-        InitializeHairStrand(rootPosition, segmentLength, numberOfVertices, curlinessFactor);
-        InitializeComputeBuffers();
-    }
 
     public void InitializeHairStrand(Vector3 rootPosition, float segmentLength, int numberOfVertices, float curlinessFactor)
     {
@@ -68,13 +50,6 @@ public class HairStrand : MonoBehaviour
             currentPosition.y -= segmentLength;
             isRoot = false;
         }
-    }
-
-    void InitializeComputeBuffers()
-    {
-        vertexBuffer = new ComputeBuffer(Vertices.Count, sizeof(float) * 6);
-        springBuffer = new ComputeBuffer(Springs.Count, sizeof(float) * 4);
-        volumeBuffer = new ComputeBuffer(1, sizeof(float) * 3);  // For external forces like wind
     }
 
     void AddSpring(int from, int to)
@@ -167,12 +142,5 @@ public class HairStrand : MonoBehaviour
                 Vertices[i].Position += rootOffset;
             }
         }
-    }
-
-    void OnDestroy()
-    {
-        vertexBuffer.Release();
-        springBuffer.Release();
-        volumeBuffer.Release();
     }
 }

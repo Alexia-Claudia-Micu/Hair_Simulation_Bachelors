@@ -1,0 +1,32 @@
+#pragma kernel CSMain
+
+RWStructuredBuffer<float3> vertexBuffer;
+RWStructuredBuffer<float3> velocityBuffer;
+RWStructuredBuffer<float3> followerBuffer;
+
+float deltaTime;
+
+[numthreads(1, 1, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    int index = id.x;
+
+    float3 position = vertexBuffer[index];
+    float3 velocity = velocityBuffer[index];
+
+    // Apply gravity force
+    float3 gravity = float3(0, -9.81, 0);
+    velocity += gravity * deltaTime;
+    position += velocity * deltaTime;
+
+    // Update main strand vertex
+    vertexBuffer[index] = position;
+    velocityBuffer[index] = velocity;
+
+    // Apply the same motion to the follower strands
+    for (int i = 0; i < 50; i++)  // Assume 50 follower strands
+    {
+        int followerIndex = index + i * 11; // Offset for each strand
+        followerBuffer[followerIndex] = position;
+    }
+}
