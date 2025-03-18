@@ -42,8 +42,17 @@ public class HairStrand : MonoBehaviour
             float offsetZ = Mathf.Cos(i * Mathf.PI * 0.5f) * curlinessFactor;
             Vector3 offset = new Vector3(offsetX, 0, offsetZ);
 
-            // Create a new vertex
-            StrandVertex newVertex = new StrandVertex(currentPosition + offset, Constants.HairMass, isRoot);
+            // Compute initial angle based on curliness
+            float initialAngle = Mathf.Atan2(offsetZ, offsetX);
+
+            // Create a new vertex with a RestAngle
+            StrandVertex newVertex = new StrandVertex(currentPosition + offset, Constants.HairMass, isRoot)
+            {
+                Angle = initialAngle,
+                RestAngle = initialAngle,  // Store the initial angle as its "resting" state
+                Torque = 0f
+            };
+
             Vertices.Add(newVertex);
 
             // Move to the next position in a straight downward line
@@ -52,13 +61,14 @@ public class HairStrand : MonoBehaviour
         }
     }
 
+
     void AddSpring(int from, int to)
     {
         float restLength = (Vertices[to].Position - Vertices[from].Position).magnitude;
         Springs.Add(new StrandSpring(from, to, restLength));
     }
 
-    void Update()
+    void FixedUpdate()
     {
         SimulateStrand();
         ApplyFollowTheLeader();
@@ -81,13 +91,43 @@ public class HairStrand : MonoBehaviour
             }
             else
             {
+                // Gravity force
                 Vector3 gravityForce = Constants.Gravity * vertex.Mass;
                 Vector3 acceleration = gravityForce / vertex.Mass;
-                vertex.Velocity += acceleration * deltaTime;
-                vertex.Position += vertex.Velocity * deltaTime;
+
+                // Compute total force magnitude
+                float totalForceMagnitude = gravityForce.magnitude + Mathf.Abs(vertex.Torque);
+
+                // Apply force only if it surpasses the resistance threshold
+                if (totalForceMagnitude > Constants.ForceThreshold)
+                {
+                    float effectiveForce = totalForceMagnitude - Constants.ForceThreshold; // Only excess force is applied
+
+                    // Apply angular restoration before position updates
+                    float angleRestoration = Constants.AngleStiffness * (vertex.RestAngle - vertex.Angle);
+                    vertex.Torque += angleRestoration;
+
+                    // Update angular velocity
+                    vertex.AngularVelocity *= Constants.RotationDamping;
+                    vertex.AngularVelocity += (vertex.Torque / vertex.Mass) * deltaTime;
+                    vertex.Angle += vertex.AngularVelocity * deltaTime;
+
+                    // Calculate positional adjustment from angle
+                    float rotationOffsetX = Mathf.Sin(vertex.Angle) * Constants.CurlinessFactor;
+                    float rotationOffsetZ = Mathf.Cos(vertex.Angle) * Constants.CurlinessFactor;
+                    Vector3 rotationOffset = new Vector3(rotationOffsetX, 0, rotationOffsetZ);
+
+                    // Apply velocity and rotation offset
+                    vertex.Velocity += (acceleration * deltaTime) * (effectiveForce / totalForceMagnitude);
+                    vertex.Position += (vertex.Velocity * deltaTime * Constants.PositionDamping) + rotationOffset;
+                }
             }
+
+            // Reset torque after applying it
+            vertex.Torque = 0f;
         }
     }
+
 
     void SimulateStrand()
     {
@@ -108,15 +148,37 @@ public class HairStrand : MonoBehaviour
             Vector3 relativeVelocity = vertexTo.Velocity - vertexFrom.Velocity;
             Vector3 dampingForce = Constants.HairDamping * relativeVelocity;
 
-            Vector3 totalForce = springForce + dampingForce;
+            Vector3 totalForceVector = springForce + dampingForce;
+            float totalForceMagnitude = totalForceVector.magnitude;
 
             if (!vertexFrom.isRoot)
             {
-                vertexFrom.Velocity += (totalForce / vertexFrom.Mass) * deltaTime;
+                vertexFrom.Velocity += (totalForceVector / vertexFrom.Mass) * deltaTime;
             }
-            vertexTo.Velocity -= (totalForce / vertexTo.Mass) * deltaTime;
+            vertexTo.Velocity -= (totalForceVector / vertexTo.Mass) * deltaTime;
+
+            // Apply torque only if the force surpasses the resistance threshold
+            if (totalForceMagnitude > Constants.ForceThreshold)
+            {
+                float effectiveForce = totalForceMagnitude - Constants.ForceThreshold; // Only apply excess force
+                float torqueEffect = Constants.TorqueFactor * (effectiveForce / vertexTo.Mass);
+                vertexTo.Torque += torqueEffect;
+            }
+
+            // Angular restoring force (bringing angle back to rest)
+            float angleRestoringForce = Constants.AngleStiffness * (vertexTo.RestAngle - vertexTo.Angle);
+            vertexTo.Torque += angleRestoringForce;
+
+            // Apply rotational damping to prevent excessive spinning
+            vertexTo.AngularVelocity *= Constants.RotationDamping;
+            vertexTo.AngularVelocity += (vertexTo.Torque / vertexTo.Mass) * deltaTime;
+            vertexTo.Angle += vertexTo.AngularVelocity * deltaTime;
+
+            // Reset torque after applying it
+            vertexTo.Torque = 0f;
         }
     }
+
 
     void ApplyFollowTheLeader()
     {
@@ -126,9 +188,16 @@ public class HairStrand : MonoBehaviour
             Vector3 direction = (Vertices[i].Position - previousPosition).normalized;
             float restLength = Springs[i - 1].Length;
 
-            Vertices[i].Position = previousPosition + direction * restLength;
+            // Adjust position while considering the vertex's rest angle for curliness
+            float rotationOffsetX = Mathf.Sin(Vertices[i].Angle) * Constants.CurlinessFactor;
+            float rotationOffsetZ = Mathf.Cos(Vertices[i].Angle) * Constants.CurlinessFactor;
+            Vector3 curlOffset = new Vector3(rotationOffsetX, 0, rotationOffsetZ);
+
+            Vertices[i].Position = previousPosition + direction * restLength + curlOffset;
         }
     }
+
+
 
     public void UpdateRootPosition(Vector3 newRootPosition)
     {
