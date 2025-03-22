@@ -86,7 +86,20 @@ public class HairStrand : MonoBehaviour
                 Vector3 angularContribution = Vector3.Cross(emitterAngularVelocity, rootLocalOffset);
                 vertex.Velocity = emitterLinearVelocity + angularContribution;
                 vertex.Position += vertex.Velocity * deltaTime;
+
+                // NEW: force the first segment to align with emitter surface normal
+                if (Vertices.Count > 1)
+                {
+                    Vector3 normal = rootLocalOffset.normalized;
+
+                    // Get spring length between vertex[0] and vertex[1]
+                    float segmentLength = Springs[0].Length;
+
+                    // Reposition vertex[1] directly along the normal
+                    Vertices[1].Position = vertex.Position + normal * segmentLength;
+                }
             }
+
             else
             {
                 Vector3 gravityForce = Constants.Gravity * vertex.Mass;

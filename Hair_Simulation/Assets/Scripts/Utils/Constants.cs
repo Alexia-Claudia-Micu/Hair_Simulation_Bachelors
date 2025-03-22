@@ -11,6 +11,8 @@ public class Constants
     public const float ForceThreshold = 0.6f;
     public const float TorqueFactor = 0.01f;
     public const float PositionDamping = 0.98f;
+    public const float RootAngleFollowSpeed = 12f; // Speed for root angle to follow surface normal (tweakable)
+
 
     // **GRAVITY & GENERAL PHYSICS**
     public static readonly Vector3 Gravity = new Vector3(0, -9.81f, 0);
