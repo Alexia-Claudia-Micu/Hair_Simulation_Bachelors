@@ -85,8 +85,17 @@ public class HairStrand : MonoBehaviour
 
             if (vertex.isRoot)
             {
-                Vector3 emitterVelocity = emitter.GetComponent<Rigidbody>().linearVelocity;
-                vertex.Velocity = emitterVelocity;
+                Rigidbody emitterRb = emitter.GetComponent<Rigidbody>();
+                Debug.Log("Emitter Angular Velocity: " + emitterRb.angularVelocity);
+
+
+                Vector3 emitterLinearVelocity = emitterRb.linearVelocity;
+                Vector3 emitterAngularVelocity = emitterRb.angularVelocity;
+
+                Vector3 rootLocalOffset = vertex.Position - emitterRb.worldCenterOfMass; 
+                Vector3 angularContribution = Vector3.Cross(emitterAngularVelocity, rootLocalOffset);
+
+                vertex.Velocity = emitterLinearVelocity + angularContribution;
                 vertex.Position += vertex.Velocity * deltaTime;
             }
             else
