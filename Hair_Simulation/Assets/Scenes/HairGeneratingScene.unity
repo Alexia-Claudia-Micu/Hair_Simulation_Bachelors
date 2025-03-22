@@ -151,12 +151,12 @@ MonoBehaviour:
   hairStrandPrefab: {fileID: 861864545969438864, guid: 79d74a572854133499276c199996cbf4, type: 3}
   sphere: {fileID: 853006544}
   strandCount: 5
-  minSegmentLength: 0.4
-  maxSegmentLength: 0.7
-  minVertices: 8
-  maxVertices: 12
+  minSegmentLength: 0.2
+  maxSegmentLength: 0.2
+  minVertices: 20
+  maxVertices: 20
   minCurliness: 0.1
-  maxCurliness: 0.5
+  maxCurliness: 0.1
 --- !u!4 &279746712
 Transform:
   m_ObjectHideFlags: 0
@@ -679,7 +679,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 2
-  rotationSpeed: 100
+  torqueAmount: 5
+  angularDamping: 5
+  maxAngularSpeed: 2
 --- !u!54 &853006551
 Rigidbody:
   m_ObjectHideFlags: 0

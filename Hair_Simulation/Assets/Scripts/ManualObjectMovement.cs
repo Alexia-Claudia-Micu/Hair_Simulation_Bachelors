@@ -2,8 +2,11 @@ using UnityEngine;
 
 public class ObjectMovement : MonoBehaviour
 {
-    public float moveSpeed = 2f; // Speed of movement
-    public float rotationSpeed = 100f; // Speed of rotation
+    public float moveSpeed = 2f;
+    public float torqueAmount = .1f;          // Smaller = slower rotation
+    public float angularDamping = 5f;        // How quickly it stops spinning
+    public float maxAngularSpeed = 2f;
+
     private Rigidbody rb;
 
     void Start()
@@ -14,38 +17,44 @@ public class ObjectMovement : MonoBehaviour
             Debug.LogError("Rigidbody component is missing!");
             return;
         }
+
+        rb.maxAngularVelocity = 100f; // Optional: ensure not clamped
     }
 
     void FixedUpdate()
     {
         if (rb == null) return;
 
-        // Get movement input
-        float moveX = 0; // Left/Right
-        float moveY = 0; // Up/Down
-        float moveZ = 0; // Forward/Backward
+        // --- Movement ---
+        Vector3 moveDirection = Vector3.zero;
+        if (Input.GetKey(KeyCode.RightArrow)) moveDirection.x = 1;
+        if (Input.GetKey(KeyCode.LeftArrow)) moveDirection.x = -1;
+        if (Input.GetKey(KeyCode.UpArrow)) moveDirection.y = 1;
+        if (Input.GetKey(KeyCode.DownArrow)) moveDirection.y = -1;
+        if (Input.GetKey(KeyCode.F)) moveDirection.z = 1;
+        if (Input.GetKey(KeyCode.B)) moveDirection.z = -1;
 
-        if (Input.GetKey(KeyCode.RightArrow)) moveX = 1;
-        if (Input.GetKey(KeyCode.LeftArrow)) moveX = -1;
-        if (Input.GetKey(KeyCode.UpArrow)) moveY = 1; // Move Up
-        if (Input.GetKey(KeyCode.DownArrow)) moveY = -1; // Move Down
-        if (Input.GetKey(KeyCode.F)) moveZ = 1; // Move Forward
-        if (Input.GetKey(KeyCode.B)) moveZ = -1; // Move Backward
+        rb.linearVelocity = moveDirection.normalized * moveSpeed;
 
-        // Apply movement
-        Vector3 moveDirection = new Vector3(moveX, moveY, moveZ).normalized;
-        rb.linearVelocity = moveDirection * moveSpeed;
+        // --- Rotation ---
+        float rotationInput = 0;
+        if (Input.GetKey(KeyCode.Comma)) rotationInput = -1;
+        if (Input.GetKey(KeyCode.Period)) rotationInput = 1;
 
-        // Get rotation input
-        float rotationY = 0;
-        if (Input.GetKey(KeyCode.Comma)) rotationY = -1; // Rotate Left ("<" key)
-        if (Input.GetKey(KeyCode.Period)) rotationY = 1;  // Rotate Right (">" key)
-
-        // Apply rotation
-        if (rotationY != 0)
+        if (rotationInput != 0)
         {
-            Quaternion deltaRotation = Quaternion.Euler(0, rotationY * rotationSpeed * Time.fixedDeltaTime, 0);
-            rb.MoveRotation(rb.rotation * deltaRotation);
+            // Only apply torque if we're under the max spin speed
+            if (rb.angularVelocity.magnitude < maxAngularSpeed)
+            {
+                Vector3 torque = Vector3.up * rotationInput * torqueAmount;
+                rb.AddTorque(torque, ForceMode.Force);
+            }
         }
+        else
+        {
+            // Smooth stop when no input
+            rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.fixedDeltaTime * angularDamping);
+        }
+
     }
 }
