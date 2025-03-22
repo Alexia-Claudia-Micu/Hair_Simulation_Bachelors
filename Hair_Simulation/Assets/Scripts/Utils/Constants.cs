@@ -2,6 +2,16 @@ using UnityEngine;
 
 public class Constants
 {
+    public const float HairMass = 0.1f;
+    public const float HairStiffness = 100f;
+    public const float HairDamping = 0.8f;
+    public const float AngleStiffness = 2.5f;       // Softer spring
+    public const float RotationDamping = 0.93f;     // Less stiff
+    public const float CurlinessFactor = 0.05f;
+    public const float ForceThreshold = 0.6f;
+    public const float TorqueFactor = 0.01f;
+    public const float PositionDamping = 0.98f;
+
     // **GRAVITY & GENERAL PHYSICS**
     public static readonly Vector3 Gravity = new Vector3(0, -9.81f, 0);
 
@@ -13,7 +23,6 @@ public class Constants
 
     public static readonly float HairBendingStiffness = 1.5f; // Resistance to bending
     public static readonly float BendingDamping = 1f; // Damping for bending motion
-    public static float AngleStiffness = 0.2f;  // NEW: Controls how much the hair resists angle deformation
 
 
     // **VOLUME & ENVIRONMENTAL INTERACTIONS**
@@ -31,17 +40,8 @@ public class Constants
 
     public static readonly float MinHairTaper = 0.2f; // Ensures minimum taper width
 
-    public static float HairMass = 0.1f;
-    public static float HairStiffness = 0.5f;
-    public static float HairDamping = 0.05f;
 
-    // New rotational constants
-    public static float TorqueFactor = 0.1f;
-    public static float RotationDamping = 0.9f;
-    public static float CurlinessFactor = 0.05f;
-
-    public static float ForceThreshold = 0.92f;  // Adjust this to control stability
-    public static float PositionDamping = 0.9f; // Reduces linear displacement when curled
+    public const float AngularForceThreshold = 0.3f;
 
 
 }

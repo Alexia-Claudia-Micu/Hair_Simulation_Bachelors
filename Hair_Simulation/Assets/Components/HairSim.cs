@@ -11,8 +11,8 @@ public class HairSim : MonoBehaviour
     public float maxSegmentLength = 0.7f;
     public int minVertices = 3;
     public int maxVertices = 5;
-    public float minCurliness = 0.1f;
-    public float maxCurliness = 0.5f;
+    public float minCurliness = 0.6f;
+    public float maxCurliness = 1.0f;
 
     private List<HairStrand> strands = new List<HairStrand>();
     private List<Vector3> localRootPositions = new List<Vector3>(); // Stores initial root offsets
