@@ -2,94 +2,82 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
-public class HairMesh : MonoBehaviour
+public class HairMeshBatchRenderer : MonoBehaviour
 {
-    public HairStrand Strand;
-    private Mesh hairMesh;
+    public HairSim hairSim;
+    public int radialSegments = 4;
+    public float rootThickness = 0.05f;
+    public float tipThickness = 0.03f;
 
-    public int radialSegments = 4; // Number of vertices around each segment (more = smoother tube)
-    public float rootThickness = 0.05f; // Thickness at the root
-    public float tipThickness = 0.03f;  // Thickness at the tip
+    private Mesh batchedMesh;
 
     void Start()
     {
-        if (Strand == null)
-        {
-            Debug.LogError("HairStrand reference is missing!");
-            return;
-        }
-
-        hairMesh = new Mesh();
-        GetComponent<MeshFilter>().mesh = hairMesh;
+        batchedMesh = new Mesh();
+        GetComponent<MeshFilter>().mesh = batchedMesh;
     }
 
     void Update()
     {
-        if (Strand.Vertices.Count > 1) // Ensure enough vertices exist
-        {
-            GenerateMesh();
-        }
+        if (hairSim == null || hairSim.Strands.Count == 0) return;
+        GenerateBatchedMesh();
     }
 
-    void GenerateMesh()
+    void GenerateBatchedMesh()
     {
-        List<Vector3> vertices = new List<Vector3>();
-        List<int> triangles = new List<int>();
+        List<Vector3> vertices = new();
+        List<int> triangles = new();
+        int vertexOffset = 0;
 
-        for (int i = 0; i < Strand.Vertices.Count - 1; i++)
+        foreach (HairStrand strand in hairSim.Strands)
         {
-            // Hair segment start and end positions
-            Vector3 vertexFromPosition = Strand.Vertices[i].Position;
-            Vector3 vertexToPosition = Strand.Vertices[i + 1].Position;
-            Vector3 segmentDirection = (vertexToPosition - vertexFromPosition).normalized;
+            if (strand.Vertices.Count < 2) continue;
 
-            // Generate a perpendicular basis for the tube shape
-            Vector3 perpendicular1 = Vector3.Cross(segmentDirection, Vector3.up).normalized;
-            Vector3 perpendicular2 = Vector3.Cross(segmentDirection, perpendicular1).normalized;
-
-            if (perpendicular1 == Vector3.zero) perpendicular1 = Vector3.right; // Fix degeneracy
-            if (perpendicular2 == Vector3.zero) perpendicular2 = Vector3.forward; // Fix degeneracy
-
-            // Compute tapering factor (interpolates between rootThickness and tipThickness)
-            float taperFactor = (float)i / (Strand.Vertices.Count - 1);
-            float taperedThickness = Mathf.Lerp(rootThickness, tipThickness, taperFactor);
-
-            // Generate circular cross-section with tapering
-            for (int j = 0; j < radialSegments; j++)
+            for (int i = 0; i < strand.Vertices.Count - 1; i++)
             {
-                float angle = (j / (float)radialSegments) * Mathf.PI * 2;
-                Vector3 radialOffset = (perpendicular1 * Mathf.Cos(angle) + perpendicular2 * Mathf.Sin(angle)) * taperedThickness;
+                Vector3 from = strand.Vertices[i].Position;
+                Vector3 to = strand.Vertices[i + 1].Position;
+                Vector3 dir = (to - from).normalized;
 
-                vertices.Add(vertexFromPosition + radialOffset);
-                vertices.Add(vertexToPosition + radialOffset);
-            }
+                Vector3 p1 = Vector3.Cross(dir, Vector3.up).normalized;
+                Vector3 p2 = Vector3.Cross(dir, p1).normalized;
+                if (p1 == Vector3.zero) p1 = Vector3.right;
+                if (p2 == Vector3.zero) p2 = Vector3.forward;
 
-            // Create triangles connecting cross-sections
-            int baseIndex = i * radialSegments * 2;
-            for (int j = 0; j < radialSegments; j++)
-            {
-                int nextJ = (j + 1) % radialSegments;
+                float t = (float)i / (strand.Vertices.Count - 1);
+                float thickness = Mathf.Lerp(rootThickness, tipThickness, t);
 
-                int v1 = baseIndex + j * 2;
-                int v2 = baseIndex + nextJ * 2;
-                int v3 = baseIndex + j * 2 + 1;
-                int v4 = baseIndex + nextJ * 2 + 1;
+                for (int j = 0; j < radialSegments; j++)
+                {
+                    float angle = (j / (float)radialSegments) * Mathf.PI * 2;
+                    Vector3 radial = (p1 * Mathf.Cos(angle) + p2 * Mathf.Sin(angle)) * thickness;
 
-                triangles.Add(v1);
-                triangles.Add(v3);
-                triangles.Add(v2);
+                    vertices.Add(from + radial);
+                    vertices.Add(to + radial);
+                }
 
-                triangles.Add(v2);
-                triangles.Add(v3);
-                triangles.Add(v4);
+                for (int j = 0; j < radialSegments; j++)
+                {
+                    int next = (j + 1) % radialSegments;
+                    int baseIndex = vertexOffset + j * 2;
+                    int nextBase = vertexOffset + next * 2;
+
+                    triangles.Add(baseIndex);
+                    triangles.Add(baseIndex + 1);
+                    triangles.Add(nextBase);
+
+                    triangles.Add(nextBase);
+                    triangles.Add(baseIndex + 1);
+                    triangles.Add(nextBase + 1);
+                }
+
+                vertexOffset += radialSegments * 2;
             }
         }
 
-        // Update the mesh data
-        hairMesh.Clear();
-        hairMesh.SetVertices(vertices);
-        hairMesh.SetTriangles(triangles, 0);
-        hairMesh.RecalculateNormals();
-        hairMesh.RecalculateBounds();
+        batchedMesh.Clear();
+        batchedMesh.SetVertices(vertices);
+        batchedMesh.SetTriangles(triangles, 0);
+        batchedMesh.RecalculateNormals();
     }
 }

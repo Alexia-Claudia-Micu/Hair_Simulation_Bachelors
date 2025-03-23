@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 6719150981422017914}
   - component: {fileID: 4272836678285774877}
   - component: {fileID: 3216044735896919286}
-  - component: {fileID: 4224978993256853619}
   m_Layer: 0
   m_Name: HairStrandHolder
   m_TagString: Untagged
@@ -133,19 +132,3 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   vertexCollisionRadius: 0.02
---- !u!114 &4224978993256853619
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 861864545969438864}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3a6b6a8625d4f44abd01d8b990e6a71, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Strand: {fileID: 3216044735896919286}
-  radialSegments: 4
-  rootThickness: 0.04
-  tipThickness: 0.01
