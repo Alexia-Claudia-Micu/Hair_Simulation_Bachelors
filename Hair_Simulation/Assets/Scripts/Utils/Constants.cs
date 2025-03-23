@@ -13,6 +13,10 @@ public class Constants
     public const float PositionDamping = 0.98f;
     public const float RootAngleFollowSpeed = 12f; // Speed for root angle to follow surface normal (tweakable)
 
+    public const float CollisionForceMultiplier = 100f;  // Higher = stronger reaction
+    public const float CollisionFriction = 5f;         // Helps damp after impact
+    public const float MaxCollisionImpulse = 20f;          // Clamp to avoid big spikes
+
 
     // **GRAVITY & GENERAL PHYSICS**
     public static readonly Vector3 Gravity = new Vector3(0, -9.81f, 0);

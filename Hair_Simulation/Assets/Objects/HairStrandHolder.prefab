@@ -129,6 +129,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   emitter: {fileID: 861864545969438864}
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 8
+  vertexCollisionRadius: 0.02
 --- !u!114 &4224978993256853619
 MonoBehaviour:
   m_ObjectHideFlags: 0

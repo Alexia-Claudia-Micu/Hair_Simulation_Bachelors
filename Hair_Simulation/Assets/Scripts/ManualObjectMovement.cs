@@ -2,6 +2,15 @@ using UnityEngine;
 
 public class ObjectMovement : MonoBehaviour
 {
+    public KeyCode upKey;
+    public KeyCode downKey;
+    public KeyCode leftKey;
+    public KeyCode rightKey;
+    public KeyCode forwardKey;
+    public KeyCode backwardKey;
+    public KeyCode spinRightKey;
+    public KeyCode spinLeftKey;
+
     public float moveSpeed = 2f;
     public float torqueAmount = .1f;          // Smaller = slower rotation
     public float angularDamping = 5f;        // How quickly it stops spinning
@@ -27,19 +36,19 @@ public class ObjectMovement : MonoBehaviour
 
         // --- Movement ---
         Vector3 moveDirection = Vector3.zero;
-        if (Input.GetKey(KeyCode.RightArrow)) moveDirection.x = 1;
-        if (Input.GetKey(KeyCode.LeftArrow)) moveDirection.x = -1;
-        if (Input.GetKey(KeyCode.UpArrow)) moveDirection.y = 1;
-        if (Input.GetKey(KeyCode.DownArrow)) moveDirection.y = -1;
-        if (Input.GetKey(KeyCode.F)) moveDirection.z = 1;
-        if (Input.GetKey(KeyCode.B)) moveDirection.z = -1;
+        if (Input.GetKey(rightKey)) moveDirection.x = 1;
+        if (Input.GetKey(leftKey)) moveDirection.x = -1;
+        if (Input.GetKey(upKey)) moveDirection.y = 1;
+        if (Input.GetKey(downKey)) moveDirection.y = -1;
+        if (Input.GetKey(forwardKey)) moveDirection.z = 1;
+        if (Input.GetKey(backwardKey)) moveDirection.z = -1;
 
         rb.linearVelocity = moveDirection.normalized * moveSpeed;
 
         // --- Rotation ---
         float rotationInput = 0;
-        if (Input.GetKey(KeyCode.Comma)) rotationInput = -1;
-        if (Input.GetKey(KeyCode.Period)) rotationInput = 1;
+        if (Input.GetKey(spinLeftKey)) rotationInput = -1;
+        if (Input.GetKey(spinRightKey)) rotationInput = 1;
 
         if (rotationInput != 0)
         {
