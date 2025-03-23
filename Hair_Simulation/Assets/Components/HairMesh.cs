@@ -5,6 +5,7 @@ using UnityEngine;
 public class HairMeshBatchRenderer : MonoBehaviour
 {
     public HairSim hairSim;
+    public Material hairMaterial;
     public int radialSegments = 4;
     public float rootThickness = 0.05f;
     public float tipThickness = 0.03f;
@@ -15,6 +16,7 @@ public class HairMeshBatchRenderer : MonoBehaviour
     {
         batchedMesh = new Mesh();
         GetComponent<MeshFilter>().mesh = batchedMesh;
+        GetComponent<MeshRenderer>().material = hairMaterial;
     }
 
     void Update()
