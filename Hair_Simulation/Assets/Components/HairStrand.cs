@@ -84,7 +84,7 @@ public class HairStrand : MonoBehaviour
             float penetrationDepth = desiredDistance - distance;
             if (penetrationDepth < 0.001f) continue;
 
-            // 1. Get collider velocity (if it has a rigidbody)
+            // Get collider velocity (if it has a Rigidbody)
             Vector3 colliderVelocity = Vector3.zero;
             Rigidbody rb = hit.attachedRigidbody;
             if (rb != null)
@@ -92,16 +92,31 @@ public class HairStrand : MonoBehaviour
                 colliderVelocity = rb.linearVelocity;
             }
 
-            // 2. Compute relative velocity
+            // Compute joint (combined) motion into collider
             Vector3 relativeVelocity = vertex.Velocity - colliderVelocity;
+            float colliderIntoHair = Vector3.Dot(colliderVelocity, collisionNormal);
+            float vertexIntoCollider = -Vector3.Dot(vertex.Velocity, collisionNormal);
+            float combinedImpact = Mathf.Max(0f, vertexIntoCollider + colliderIntoHair);
 
-            // 3. Only react to motion toward the collider
-            float relativeIntoCollider = -Vector3.Dot(relativeVelocity, collisionNormal);
-            if (relativeIntoCollider > 0f)
+            if (combinedImpact > 0f)
             {
-                float impulseStrength = penetrationDepth * Constants.CollisionForceMultiplier;
-                float scaledImpulse = Mathf.Clamp(impulseStrength * relativeIntoCollider, 0.01f, Constants.MaxCollisionImpulse);
-                Vector3 impulse = collisionNormal * scaledImpulse;
+                float impulseStrength;
+
+                if (penetrationDepth > 1f)
+                {
+                    // Full impulse if collision is too deep
+                    impulseStrength = 100f;
+                }
+                else
+                {
+                    // Normal impulse scaling based on relative motion
+                    float t = Mathf.Clamp01(combinedImpact / 15f);
+                    impulseStrength = Mathf.Lerp(8f, 100f, t);
+                }
+
+                float finalImpulse = impulseStrength * penetrationDepth;
+                Vector3 impulse = collisionNormal * finalImpulse;
+
                 vertex.Velocity += impulse * deltaTime;
             }
         }

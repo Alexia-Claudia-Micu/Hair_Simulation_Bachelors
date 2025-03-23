@@ -15,7 +15,7 @@ public class Constants
 
     public const float CollisionForceMultiplier = 100f;  // Higher = stronger reaction
     public const float CollisionFriction = 5f;         // Helps damp after impact
-    public const float MaxCollisionImpulse = 100f;          // Clamp to avoid big spikes
+    public const float MaxCollisionImpulse = 20f;          // Clamp to avoid big spikes
 
 
     // **GRAVITY & GENERAL PHYSICS**
