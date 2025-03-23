@@ -62,8 +62,7 @@
               "RelativeToolTip": "Assets\\Scripts\\Utils\\Constants.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-22T17:43:08.062Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-22T17:43:08.062Z"
             },
             {
               "$type": "Document",
@@ -88,18 +87,17 @@
               "RelativeToolTip": "Assets\\Objects\\StrandVertex.cs",
               "ViewState": "AgIAAAUAAAAAAAAAAAAIwA4AAABSAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-22T17:42:28.307Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-22T17:42:28.307Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 4,
               "Title": "StrandSpring.cs",
               "DocumentMoniker": "C:\\Users\\Alexia RTX Top\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Objects\\StrandSpring.cs",
               "RelativeDocumentMoniker": "Assets\\Objects\\StrandSpring.cs",
               "ToolTip": "C:\\Users\\Alexia RTX Top\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Objects\\StrandSpring.cs",
               "RelativeToolTip": "Assets\\Objects\\StrandSpring.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-22T17:42:25.318Z"
             },
@@ -113,8 +111,7 @@
               "RelativeToolTip": "Assets\\Components\\testscript.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-22T17:42:18.17Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-22T17:42:18.17Z"
             },
             {
               "$type": "Document",
@@ -131,7 +128,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "HairMesh2d.cs",
               "DocumentMoniker": "C:\\Users\\Alexia RTX Top\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\HairMesh2d.cs",
               "RelativeDocumentMoniker": "Assets\\Components\\HairMesh2d.cs",
@@ -161,7 +158,7 @@
               "RelativeDocumentMoniker": "Assets\\Components\\HairCluster.cs",
               "ToolTip": "C:\\Users\\Alexia RTX Top\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\HairCluster.cs",
               "RelativeToolTip": "Assets\\Components\\HairCluster.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACoAAAAAAAAAAAAqwC8AAABPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-22T17:40:53.035Z"
             }
