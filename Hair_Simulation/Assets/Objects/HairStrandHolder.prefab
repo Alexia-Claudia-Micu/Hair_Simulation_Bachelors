@@ -147,5 +147,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Strand: {fileID: 3216044735896919286}
   radialSegments: 4
-  rootThickness: 0.04
-  tipThickness: 0.01
+  rootThickness: 0.01
+  tipThickness: 0.005

@@ -1,69 +1,85 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO: the strand is not initialized with all the correct parameters (defaults)
+
 public class HairSim : MonoBehaviour
 {
+    [Header("Hair Strand Prefab & Emitter")]
     public GameObject hairStrandPrefab;
-    public GameObject sphere; // The moving object (emitter)
+    public GameObject sphere;
+
+    [Header("Hair Cluster Settings")]
     public int strandCount = 20;
-    public float minSegmentLength = 0.4f;
-    public float maxSegmentLength = 0.7f;
-    public int minVertices = 3;
-    public int maxVertices = 5;
-    public float minCurliness = 0.6f;
-    public float maxCurliness = 1.0f;
+
+    [Header("Segment Settings")]
+    public float baseSegmentLength = 0.5f;
+    [Range(0f, 1f)]
+    public float segmentLengthRandomness = 0.2f;
+
+    [Header("Vertex Count")]
+    public int baseVertexCount = 4;
+    [Range(0f, 1f)]
+    public float vertexCountRandomness = 0.25f;
+
+    [Header("Curl Frequency")]
+    public float baseCurlFrequency = 0.6f;
+    [Range(0f, 1f)]
+    public float curlFrequencyRandomness = 0.5f;
+
+    [Header("Curl Diameter")]
+    public float baseCurlDiameter = 0.02f;
+    [Range(0f, 1f)]
+    public float curlDiameterRandomness = 0.5f;
 
     private List<HairStrand> strands = new List<HairStrand>();
-    private List<Vector3> localRootPositions = new List<Vector3>(); // Stores initial root offsets
+    private List<Vector3> localRootPositions = new List<Vector3>();
 
     void Start()
     {
         if (sphere == null)
         {
-            Debug.LogError("Sphere object (emitter) is not assigned to HairCluster.");
+            Debug.LogError("Sphere object (emitter) is not assigned to HairSim.");
             return;
         }
 
         GenerateHairCluster();
     }
 
-
     void GenerateHairCluster()
     {
         if (hairStrandPrefab == null)
         {
-            Debug.LogError("HairStrand prefab is not assigned to HairCluster.");
+            Debug.LogError("HairStrand prefab is not assigned.");
             return;
         }
 
         for (int i = 0; i < strandCount; i++)
         {
-            // Get a random position on the sphere's surface
             Vector3 rootPosition = GetRandomPointOnSphereSurface();
             Vector3 localRootPosition = sphere.transform.InverseTransformPoint(rootPosition);
 
-            float segmentLength = Random.Range(minSegmentLength, maxSegmentLength);
-            int numberOfVertices = Random.Range(minVertices, maxVertices);
-            float curlinessFactor = Random.Range(minCurliness, maxCurliness);
+            float segmentLength = baseSegmentLength * Random.Range(1f - segmentLengthRandomness, 1f + segmentLengthRandomness);
+            int numberOfVertices = Mathf.RoundToInt(baseVertexCount * Random.Range(1f - vertexCountRandomness, 1f + vertexCountRandomness));
+            numberOfVertices = Mathf.Max(2, numberOfVertices); // ensure at least 2
 
-            // Instantiate hair strand
+            float curlFrequency = baseCurlFrequency * Random.Range(1f - curlFrequencyRandomness, 1f + curlFrequencyRandomness);
+            float curlDiameter = baseCurlDiameter * Random.Range(1f - curlDiameterRandomness, 1f + curlDiameterRandomness);
+
             GameObject strandObject = Instantiate(hairStrandPrefab, Vector3.zero, Quaternion.identity);
             HairStrand hairStrand = strandObject.GetComponent<HairStrand>();
 
             if (hairStrand != null)
             {
-                hairStrand.emitter = sphere; // Attach emitter reference
-                hairStrand.InitializeHairStrand(rootPosition, segmentLength, numberOfVertices, curlinessFactor);
+                hairStrand.emitter = sphere;
+                hairStrand.InitializeHairStrand(rootPosition, segmentLength, numberOfVertices, curlFrequency, curlDiameter);
                 strands.Add(hairStrand);
-                localRootPositions.Add(localRootPosition); // Store relative position
+                localRootPositions.Add(localRootPosition);
             }
         }
     }
 
     void FixedUpdate()
     {
-        // Update each strand's root position based on the emitter's movement
         for (int i = 0; i < strands.Count; i++)
         {
             if (strands[i] != null)
@@ -74,9 +90,6 @@ public class HairSim : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Generates a random point on the surface of the sphere.
-    /// </summary>
     Vector3 GetRandomPointOnSphereSurface()
     {
         SphereCollider sphereCollider = sphere.GetComponent<SphereCollider>();
@@ -87,12 +100,7 @@ public class HairSim : MonoBehaviour
         }
 
         float sphereRadius = sphereCollider.radius * sphere.transform.lossyScale.x;
-
-        // Generate a random point on a unit sphere
         Vector3 randomDirection = Random.onUnitSphere;
-
-        // Convert to world space by scaling with the sphere's radius and position
         return sphere.transform.position + randomDirection * sphereRadius;
     }
-
 }

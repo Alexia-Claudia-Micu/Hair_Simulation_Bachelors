@@ -14,7 +14,7 @@ public class HairStrand : MonoBehaviour
     public LayerMask collisionMask;
     public float vertexCollisionRadius = 0.02f;
 
-    public void InitializeHairStrand(Vector3 rootPosition, float segmentLength, int numberOfVertices, float curlinessFactor)
+    public void InitializeHairStrand(Vector3 rootPosition, float segmentLength, int numberOfVertices, float curlFrequency, float curlDiameter)
     {
         if (Vertices == null) Vertices = new List<StrandVertex>();
         if (Springs == null) Springs = new List<StrandSpring>();
@@ -22,7 +22,7 @@ public class HairStrand : MonoBehaviour
         Vertices.Clear();
         Springs.Clear();
 
-        GenerateStrand(rootPosition, segmentLength, numberOfVertices, curlinessFactor);
+        GenerateStrand(rootPosition, segmentLength, numberOfVertices, curlFrequency, curlDiameter);
 
         for (int i = 0; i < Vertices.Count - 1; i++)
         {
@@ -30,20 +30,23 @@ public class HairStrand : MonoBehaviour
         }
     }
 
-    void GenerateStrand(Vector3 rootPosition, float segmentLength, int numberOfVertices, float curlinessFactor)
+    void GenerateStrand(Vector3 rootPosition, float segmentLength, int numberOfVertices, float curlFrequency, float curlDiameter)
     {
         Vector3 currentPosition = rootPosition;
         bool isRoot = true;
 
         for (int i = 0; i < numberOfVertices; i++)
         {
-            float offsetX = Mathf.Sin(i * Mathf.PI * 0.5f) * curlinessFactor;
-            float offsetZ = Mathf.Cos(i * Mathf.PI * 0.5f) * curlinessFactor;
+            float phase = i * curlFrequency * Mathf.PI * 2f;
+            float offsetX = Mathf.Sin(phase) * curlDiameter;
+            float offsetZ = Mathf.Cos(phase) * curlDiameter;
             Vector3 offset = new Vector3(offsetX, 0, offsetZ);
 
-            float initialAngle = Mathf.Atan2(offsetZ, offsetX);
+            float initialAngle = (curlDiameter > 0f) ? Mathf.Atan2(offsetZ, offsetX) : 0f;
 
-            StrandVertex newVertex = new StrandVertex(currentPosition + offset, Constants.HairMass, isRoot)
+            Vector3 finalPosition = currentPosition + offset;
+
+            StrandVertex newVertex = new StrandVertex(finalPosition, Constants.HairMass, isRoot)
             {
                 Angle = initialAngle,
                 RestAngle = initialAngle,
@@ -55,6 +58,8 @@ public class HairStrand : MonoBehaviour
             isRoot = false;
         }
     }
+
+
 
     void AddSpring(int from, int to)
     {
