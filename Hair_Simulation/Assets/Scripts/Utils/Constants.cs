@@ -1,11 +1,24 @@
+
 using UnityEngine;
+
+/*
+ * Presets for hair types
+ * 
+ * Curly:
+ *  - Length          - 0.2
+ *  - Frequency       - 0.2
+ *  - Diameter        - 0.1
+ * 
+ * 
+ * 
+ */
 
 public class Constants
 {
     public const float HairMass = 0.1f;
     public const float HairStiffness = 100f;
     public const float HairDamping = 0.8f;
-    public const float AngleStiffness = 2.5f;       // Softer spring
+    public const float AngleStiffness = .5f;       // Softer spring
     public const float RotationDamping = 0.93f;     // Less stiff
     public const float CurlinessFactor = 0.05f;
     public const float ForceThreshold = 0.6f;

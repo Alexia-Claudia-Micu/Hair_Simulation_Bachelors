@@ -3,21 +3,45 @@ using UnityEngine;
 
 public class HairSim : MonoBehaviour
 {
-    public GameObject sphere;
+    [Header("Hair Strand Prefab & Emitter")]
     public GameObject hairStrandPrefab;
+    public GameObject sphere;
+
+    [Header("Hair Cluster Settings")]
     public int strandCount = 20;
-    public float minSegmentLength = 0.4f;
-    public float maxSegmentLength = 0.7f;
-    public int minVertices = 3;
-    public int maxVertices = 5;
-    public float minCurliness = 0.6f;
-    public float maxCurliness = 1.0f;
+
+    [Header("Segment Settings")]
+    public float baseSegmentLength = 0.5f;
+    [Range(0f, 1f)]
+    public float segmentLengthRandomness = 0.2f;
+
+    [Header("Vertex Count")]
+    public int baseVertexCount = 4;
+    [Range(0f, 1f)]
+    public float vertexCountRandomness = 0.25f;
+
+    [Header("Curl Frequency")]
+    public float baseCurlFrequency = 0.6f;
+    [Range(0f, 1f)]
+    public float curlFrequencyRandomness = 0.5f;
+
+    [Header("Curl Diameter")]
+    public float baseCurlDiameter = 0.02f;
+    [Range(0f, 1f)]
+    public float curlDiameterRandomness = 0.5f;
+
+    private List<Vector3> localRootPositions = new List<Vector3>();
 
     public List<HairStrand> Strands { get; private set; } = new();
-    private List<Vector3> localRootPositions = new();
 
     void Start()
     {
+        if (sphere == null)
+        {
+            Debug.LogError("Sphere object (emitter) is not assigned to HairSim.");
+            return;
+        }
+
         GenerateHairCluster();
     }
 
@@ -35,31 +59,48 @@ public class HairSim : MonoBehaviour
 
     void GenerateHairCluster()
     {
-        if (sphere == null || hairStrandPrefab == null) return;
+        if (hairStrandPrefab == null)
+        {
+            Debug.LogError("HairStrand prefab is not assigned.");
+            return;
+        }
 
         for (int i = 0; i < strandCount; i++)
         {
             Vector3 rootPosition = GetRandomPointOnSphereSurface();
             Vector3 localRootPosition = sphere.transform.InverseTransformPoint(rootPosition);
 
-            float segmentLength = Random.Range(minSegmentLength, maxSegmentLength);
-            int numberOfVertices = Random.Range(minVertices, maxVertices);
-            float curlinessFactor = Random.Range(minCurliness, maxCurliness);
+            float segmentLength = baseSegmentLength * Random.Range(1f - segmentLengthRandomness, 1f + segmentLengthRandomness);
+            int numberOfVertices = Mathf.RoundToInt(baseVertexCount * Random.Range(1f - vertexCountRandomness, 1f + vertexCountRandomness));
+            numberOfVertices = Mathf.Max(2, numberOfVertices); // ensure at least 2
+
+            float curlFrequency = baseCurlFrequency * Random.Range(1f - curlFrequencyRandomness, 1f + curlFrequencyRandomness);
+            float curlDiameter = baseCurlDiameter * Random.Range(1f - curlDiameterRandomness, 1f + curlDiameterRandomness);
 
             GameObject strandObject = Instantiate(hairStrandPrefab, Vector3.zero, Quaternion.identity);
-            HairStrand strand = strandObject.GetComponent<HairStrand>();
-            strand.emitter = sphere;
-            strand.InitializeHairStrand(rootPosition, segmentLength, numberOfVertices, curlinessFactor);
+            HairStrand hairStrand = strandObject.GetComponent<HairStrand>();
 
-            Strands.Add(strand);
-            localRootPositions.Add(localRootPosition);
+            if (hairStrand != null)
+            {
+                hairStrand.emitter = sphere;
+                hairStrand.InitializeHairStrand(rootPosition, segmentLength, numberOfVertices, curlFrequency, curlDiameter);
+                Strands.Add(hairStrand);
+                localRootPositions.Add(localRootPosition);
+            }
         }
     }
 
     Vector3 GetRandomPointOnSphereSurface()
     {
         SphereCollider sphereCollider = sphere.GetComponent<SphereCollider>();
-        float radius = sphereCollider.radius * sphere.transform.lossyScale.x;
-        return sphere.transform.position + Random.onUnitSphere * radius;
+        if (sphereCollider == null)
+        {
+            Debug.LogError("Sphere does not have a SphereCollider.");
+            return sphere.transform.position;
+        }
+
+        float sphereRadius = sphereCollider.radius * sphere.transform.lossyScale.x;
+        Vector3 randomDirection = Random.onUnitSphere;
+        return sphere.transform.position + randomDirection * sphereRadius;
     }
 }
