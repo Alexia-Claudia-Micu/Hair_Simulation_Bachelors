@@ -92,15 +92,16 @@ public class HairSim : MonoBehaviour
 
     Vector3 GetRandomPointOnSphereSurface()
     {
-        SphereCollider sphereCollider = sphere.GetComponent<SphereCollider>();
-        if (sphereCollider == null)
+        Rigidbody rb = sphere.GetComponent<Rigidbody>();
+        if (rb == null)
         {
-            Debug.LogError("Sphere does not have a SphereCollider.");
+            Debug.LogError("No Rigidbody found on emitter object.");
             return sphere.transform.position;
         }
 
-        float sphereRadius = sphereCollider.radius * sphere.transform.lossyScale.x;
-        Vector3 randomDirection = Random.onUnitSphere;
-        return sphere.transform.position + randomDirection * sphereRadius;
+        float radius = sphere.transform.lossyScale.x * 0.5f; // assuming uniform scale
+        Vector3 direction = Random.onUnitSphere;
+        return sphere.transform.position + direction * radius;
     }
+
 }
