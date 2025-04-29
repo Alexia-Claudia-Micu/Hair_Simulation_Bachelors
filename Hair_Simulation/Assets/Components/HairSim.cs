@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class HairSim : MonoBehaviour
 {
     [Header("Hair Strand Prefab & Emitter")]
@@ -33,6 +32,7 @@ public class HairSim : MonoBehaviour
 
     private List<HairStrand> strands = new List<HairStrand>();
     private List<Vector3> localRootPositions = new List<Vector3>();
+    private List<Vector3> localRootNormals = new List<Vector3>(); // NEW
 
     void Start()
     {
@@ -57,6 +57,7 @@ public class HairSim : MonoBehaviour
         {
             Vector3 rootPosition = GetRandomPointOnSphereSurface();
             Vector3 localRootPosition = sphere.transform.InverseTransformPoint(rootPosition);
+            Vector3 localRootNormal = sphere.transform.InverseTransformDirection((rootPosition - sphere.transform.position).normalized);
 
             float segmentLength = baseSegmentLength * Random.Range(1f - segmentLengthRandomness, 1f + segmentLengthRandomness);
             int numberOfVertices = Mathf.RoundToInt(baseVertexCount * Random.Range(1f - vertexCountRandomness, 1f + vertexCountRandomness));
@@ -74,6 +75,7 @@ public class HairSim : MonoBehaviour
                 hairStrand.InitializeHairStrand(rootPosition, segmentLength, numberOfVertices, curlFrequency, curlDiameter);
                 strands.Add(hairStrand);
                 localRootPositions.Add(localRootPosition);
+                localRootNormals.Add(localRootNormal); // Save local normal
             }
         }
     }
@@ -85,7 +87,9 @@ public class HairSim : MonoBehaviour
             if (strands[i] != null)
             {
                 Vector3 newWorldRoot = sphere.transform.TransformPoint(localRootPositions[i]);
-                strands[i].UpdateRootPosition(newWorldRoot);
+                Vector3 newWorldNormal = sphere.transform.TransformDirection(localRootNormals[i]);
+
+                strands[i].UpdateRoot(newWorldRoot, newWorldNormal);
             }
         }
     }
@@ -103,5 +107,4 @@ public class HairSim : MonoBehaviour
         Vector3 direction = Random.onUnitSphere;
         return sphere.transform.position + direction * radius;
     }
-
 }

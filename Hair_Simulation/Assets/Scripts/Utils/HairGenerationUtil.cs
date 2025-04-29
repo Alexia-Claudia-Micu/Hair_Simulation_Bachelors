@@ -5,7 +5,7 @@ public static class HairGenerationUtil
 {
     public static List<StrandVertex> GenerateCurledStrand(
         Vector3 rootPosition,
-        float segmentLength,
+        float baseSegmentLength,
         int numberOfVertices,
         float curlFrequency,
         float curlDiameter,
@@ -16,14 +16,26 @@ public static class HairGenerationUtil
         Vector3 currentPosition = rootPosition;
         bool isRoot = true;
 
+        float radius = curlDiameter;
+        float fullCircle = Mathf.PI * 2f; // 360 degrees in radians
+        float totalCurl = curlFrequency * fullCircle;
+
+        // Dynamically calculate segment length based on curl
+        float angularStep = totalCurl / (numberOfVertices - 1); // radians between points
+        float dynamicSegmentLength = radius * angularStep; // arc length
+
+        // If diameter is very small (almost straight), fallback to base length
+        if (dynamicSegmentLength < baseSegmentLength * 0.3f)
+            dynamicSegmentLength = baseSegmentLength * 0.3f;
+
         for (int i = 0; i < numberOfVertices; i++)
         {
             float phase = i * curlFrequency * Mathf.PI * 2f;
-            float offsetX = Mathf.Sin(phase) * curlDiameter;
-            float offsetZ = Mathf.Cos(phase) * curlDiameter;
+            float offsetX = Mathf.Sin(phase) * radius;
+            float offsetZ = Mathf.Cos(phase) * radius;
             Vector3 offset = new Vector3(offsetX, 0, offsetZ);
 
-            float initialAngle = (curlDiameter > 0f) ? Mathf.Atan2(offsetZ, offsetX) : 0f;
+            float initialAngle = (radius > 0f) ? Mathf.Atan2(offsetZ, offsetX) : 0f;
 
             Vector3 finalPosition = currentPosition + offset;
 
@@ -35,7 +47,8 @@ public static class HairGenerationUtil
             };
 
             vertices.Add(newVertex);
-            currentPosition.y -= segmentLength;
+
+            currentPosition.y -= dynamicSegmentLength;
             isRoot = false;
         }
 
@@ -163,14 +176,14 @@ public static class HairGenerationUtil
     }
 
     public static List<StrandVertex> GenerateOrganicCurledStrand(
-     Vector3 rootPosition,
-     float segmentLength,
-     int numberOfVertices,
-     float baseCurlFrequency,
-     float baseCurlDiameter,
-     float hairMass,
-     float curlVariationFactor = 0.1f // 0 = no randomness, 1 = max variation
- )
+        Vector3 rootPosition,
+        float baseSegmentLength,
+        int numberOfVertices,
+        float baseCurlFrequency,
+        float baseCurlDiameter,
+        float hairMass,
+        float curlVariationFactor = 0.1f // 0 = no randomness, 1 = max variation
+    )
     {
         List<StrandVertex> vertices = new List<StrandVertex>();
         Vector3 currentPosition = rootPosition;
@@ -185,11 +198,23 @@ public static class HairGenerationUtil
         float startFrequency = baseCurlFrequency * 0.25f;
         float startDiameter = baseCurlDiameter * 0.01f;
 
+        float radius = baseCurlDiameter;
+        float fullCircle = Mathf.PI * 2f; // 360 degrees
+        float totalCurl = baseCurlFrequency * fullCircle;
+
+        // Dynamically calculate segment length based on base curl
+        float angularStep = totalCurl / (numberOfVertices - 1); // radians between points
+        float dynamicSegmentLength = radius * angularStep; // arc length
+
+        // Fallback: avoid segment being too small
+        if (dynamicSegmentLength < baseSegmentLength * 0.3f)
+            dynamicSegmentLength = baseSegmentLength * 0.3f;
+
         for (int i = 0; i < numberOfVertices; i++)
         {
             float t = (float)i / (numberOfVertices - 1);
 
-            // Gradual interpolation
+            // Gradually interpolate curl tightness
             float frequency = Mathf.Lerp(startFrequency, baseCurlFrequency, t);
             float diameter = Mathf.Lerp(startDiameter, baseCurlDiameter, t);
 
@@ -201,7 +226,7 @@ public static class HairGenerationUtil
                 diameter += (float)(random.NextDouble() * variationScale - variationScale / 2f);
             }
 
-            // Apply direction and randomized phase
+            // Apply direction and random phase offset
             float phase = i * frequency * Mathf.PI * 2f * directionMultiplier;
             if (curlVariationFactor > 0f)
             {
@@ -224,12 +249,14 @@ public static class HairGenerationUtil
             };
 
             vertices.Add(newVertex);
-            currentPosition.y -= segmentLength;
+
+            currentPosition.y -= dynamicSegmentLength; // Use dynamic segment length
             isRoot = false;
         }
 
         return vertices;
     }
+
 
     public static List<StrandVertex> GenerateFromImportedVertices(List<Vector3> vertexPositions, float hairMass)
     {

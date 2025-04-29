@@ -32,6 +32,8 @@ public class HairStrand : MonoBehaviour
                 );
 
 
+        //Vertices = HairGenerationUtil.GenerateCurledStrand(rootPosition, segmentLength, numberOfVertices, curlFrequency, curlDiameter, Constants.HairMass);
+
         for (int i = 0; i < Vertices.Count - 1; i++)
         {
             AddSpring(i, i + 1);
@@ -284,4 +286,24 @@ public class HairStrand : MonoBehaviour
             }
         }
     }
+
+    public void UpdateRoot(Vector3 newRootPosition, Vector3 newRootNormal)
+    {
+        if (Vertices.Count == 0) return;
+
+        // Move root position
+        Vector3 rootOffset = newRootPosition - Vertices[0].Position;
+        for (int i = 0; i < Vertices.Count; i++)
+        {
+            Vertices[i].Position += rootOffset;
+        }
+
+        // Reorient first segment based on the emitter's rotation
+        if (Vertices.Count > 1)
+        {
+            float restLength = Springs[0].Length;
+            Vertices[1].Position = Vertices[0].Position + newRootNormal * restLength;
+        }
+    }
+
 }
