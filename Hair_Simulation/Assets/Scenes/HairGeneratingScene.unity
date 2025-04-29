@@ -312,15 +312,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e33b3e5f6fae63640b84c9f7b762170e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sphere: {fileID: 853006544}
   hairStrandPrefab: {fileID: 861864545969438864, guid: 79d74a572854133499276c199996cbf4, type: 3}
+  sphere: {fileID: 853006544}
   strandCount: 30
-  minSegmentLength: 0.2
-  maxSegmentLength: 0.2
-  minVertices: 20
-  maxVertices: 20
-  minCurliness: 0.1
-  maxCurliness: 0.1
+  baseSegmentLength: 0.1
+  segmentLengthRandomness: 0
+  baseVertexCount: 20
+  vertexCountRandomness: 0
+  baseCurlFrequency: 0.2
+  curlFrequencyRandomness: 0
+  baseCurlDiameter: 0.05
+  curlDiameterRandomness: 0
 --- !u!4 &279746712
 Transform:
   m_ObjectHideFlags: 0
@@ -351,8 +353,8 @@ MonoBehaviour:
   hairSim: {fileID: 279746711}
   hairMaterial: {fileID: 2100000, guid: b01a59fae46297f41938361ad2b4f87d, type: 2}
   radialSegments: 4
-  rootThickness: 0.05
-  tipThickness: 0.03
+  rootThickness: 0.02
+  tipThickness: 0.01
 --- !u!33 &279746714
 MeshFilter:
   m_ObjectHideFlags: 0
