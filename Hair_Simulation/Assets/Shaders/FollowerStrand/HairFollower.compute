@@ -1,0 +1,42 @@
+#pragma kernel CSMain
+
+struct GPUVertex
+{
+    float3 position;
+    float3 velocity;
+    float angle;
+};
+
+StructuredBuffer<GPUVertex> LeaderVertices;
+RWStructuredBuffer<float3> FollowerPositions;
+
+int vertexCountPerStrand;
+int followerCount;
+float spawnRadius;
+float taperAmount; // <-- new
+
+[numthreads(32, 1, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    uint totalVerticesPerStrandGroup = followerCount * vertexCountPerStrand;
+    uint strandIndex = id.x / totalVerticesPerStrandGroup;
+
+    uint strandOffset = id.x % totalVerticesPerStrandGroup;
+    uint followerIndex = strandOffset / vertexCountPerStrand;
+    uint vertexIndex = strandOffset % vertexCountPerStrand;
+
+    uint leaderIdx = strandIndex * vertexCountPerStrand + vertexIndex;
+    float3 basePos = LeaderVertices[leaderIdx].position;
+
+    float followerAngle = (6.2831 * followerIndex) / (float) followerCount;
+
+    // Adjustable taper
+    float t = (float) vertexIndex / (float) (vertexCountPerStrand - 1);
+    float taper = lerp(1.0, taperAmount, t); // tip collapses based on taperAmount
+
+    float actualRadius = spawnRadius * taper;
+
+    float3 offset = float3(cos(followerAngle), 0, sin(followerAngle)) * actualRadius;
+
+    FollowerPositions[id.x] = basePos + offset;
+}

@@ -314,7 +314,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hairStrandPrefab: {fileID: 861864545969438864, guid: 79d74a572854133499276c199996cbf4, type: 3}
   sphere: {fileID: 853006544}
-  strandCount: 30
+  strandCount: 1
   baseSegmentLength: 0.1
   segmentLengthRandomness: 0
   baseVertexCount: 20
@@ -323,6 +323,11 @@ MonoBehaviour:
   curlFrequencyRandomness: 0
   baseCurlDiameter: 0.05
   curlDiameterRandomness: 0
+  hairComputeShader: {fileID: 7200000, guid: 09997b6f6dc3b0e40897bf78a0dbef6e, type: 3}
+  followerRenderMaterial: {fileID: 2100000, guid: fde0737f9abe91e44b36c7d8089a0cb6, type: 2}
+  followerCount: 5
+  spawnRadius: 0.06
+  taperAmount: 0.493
 --- !u!4 &279746712
 Transform:
   m_ObjectHideFlags: 0
@@ -353,8 +358,8 @@ MonoBehaviour:
   hairSim: {fileID: 279746711}
   hairMaterial: {fileID: 2100000, guid: b01a59fae46297f41938361ad2b4f87d, type: 2}
   radialSegments: 4
-  rootThickness: 0.02
-  tipThickness: 0.01
+  rootThickness: 0.01
+  tipThickness: 0.005
 --- !u!33 &279746714
 MeshFilter:
   m_ObjectHideFlags: 0

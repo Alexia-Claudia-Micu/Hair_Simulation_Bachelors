@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
-public class HairMeshBatchRenderer : MonoBehaviour
+public class HairMeshBatchRendererGPU : MonoBehaviour
 {
     public HairSim hairSim;
     public Material hairMaterial;
@@ -11,6 +11,7 @@ public class HairMeshBatchRenderer : MonoBehaviour
     public float tipThickness = 0.03f;
 
     private Mesh batchedMesh;
+    private Vector3[] gpuFollowerPositions;
 
     void Start()
     {
@@ -22,6 +23,16 @@ public class HairMeshBatchRenderer : MonoBehaviour
     void Update()
     {
         if (hairSim == null || hairSim.Strands.Count == 0) return;
+        if (hairSim.followerBuffer == null) return;
+
+        int totalVertices = hairSim.Strands.Count * hairSim.followerCount * hairSim.vertexCountPerStrand;
+
+        if (gpuFollowerPositions == null || gpuFollowerPositions.Length != totalVertices)
+            gpuFollowerPositions = new Vector3[totalVertices];
+
+        // Pull the GPU data back into CPU array
+        hairSim.followerBuffer.GetData(gpuFollowerPositions);
+
         GenerateBatchedMesh();
     }
 
@@ -31,14 +42,18 @@ public class HairMeshBatchRenderer : MonoBehaviour
         List<int> triangles = new();
         int vertexOffset = 0;
 
-        foreach (HairStrand strand in hairSim.Strands)
-        {
-            if (strand.Vertices.Count < 2) continue;
+        int strandCount = hairSim.Strands.Count * hairSim.followerCount;
+        int verticesPerStrand = hairSim.vertexCountPerStrand;
 
-            for (int i = 0; i < strand.Vertices.Count - 1; i++)
+        for (int s = 0; s < strandCount; s++)
+        {
+            for (int v = 0; v < verticesPerStrand - 1; v++)
             {
-                Vector3 from = strand.Vertices[i].Position;
-                Vector3 to = strand.Vertices[i + 1].Position;
+                int idx0 = s * verticesPerStrand + v;
+                int idx1 = s * verticesPerStrand + v + 1;
+
+                Vector3 from = gpuFollowerPositions[idx0];
+                Vector3 to = gpuFollowerPositions[idx1];
                 Vector3 dir = (to - from).normalized;
 
                 Vector3 p1 = Vector3.Cross(dir, Vector3.up).normalized;
@@ -46,7 +61,7 @@ public class HairMeshBatchRenderer : MonoBehaviour
                 if (p1 == Vector3.zero) p1 = Vector3.right;
                 if (p2 == Vector3.zero) p2 = Vector3.forward;
 
-                float t = (float)i / (strand.Vertices.Count - 1);
+                float t = (float)v / (verticesPerStrand - 1);
                 float thickness = Mathf.Lerp(rootThickness, tipThickness, t);
 
                 for (int j = 0; j < radialSegments; j++)
