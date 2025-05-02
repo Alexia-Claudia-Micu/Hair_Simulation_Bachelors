@@ -27,9 +27,9 @@ public class HairSim : MonoBehaviour
     [Range(0f, 1f)] public float curlDiameterRandomness = 0.5f;
 
     private List<Vector3> localRootPositions = new List<Vector3>();
-
     public List<HairStrand> Strands { get; private set; } = new();
 
+    [Header("Compute & Rendering")]
     public ComputeShader hairComputeShader;
     public Material followerRenderMaterial;
 
@@ -39,12 +39,14 @@ public class HairSim : MonoBehaviour
 
     [Header("Follower Settings")]
     public int followerCount = 5;
-
     public float spawnRadius = 0.04f;
-
     [Range(0f, 1f)]
-    public float taperAmount = 0.2f; // New field, default 0.2
+    public float taperAmount = 0.2f;
+    public float hairThickness = 0.01f; // extra thickness param
 
+    [Header("Hair Visual Thickness")]
+    public float rootThickness = 0.02f;
+    public float tipThickness = 0.01f;
 
     void Start()
     {
@@ -55,10 +57,9 @@ public class HairSim : MonoBehaviour
         }
 
         GenerateHairStrands();
-
         if (vertexCountPerStrand == 0)
         {
-            Debug.LogError("vertexCountPerStrand was not set. Make sure at least one strand was generated.");
+            Debug.LogError("vertexCountPerStrand was not set.");
             return;
         }
 
@@ -91,12 +92,10 @@ public class HairSim : MonoBehaviour
         int totalFollowerVertices = Strands.Count * followerCount * vertexCountPerStrand;
         int kernel = hairComputeShader.FindKernel("CSMain");
 
-        // Set shader constants
         hairComputeShader.SetInt("vertexCountPerStrand", vertexCountPerStrand);
         hairComputeShader.SetInt("followerCount", followerCount);
-        hairComputeShader.SetFloat("spawnRadius", spawnRadius); // <-- Here: Set your adjustable follower spawn radius
-        hairComputeShader.SetFloat("taperAmount", taperAmount); // <-- add this
-
+        hairComputeShader.SetFloat("spawnRadius", spawnRadius);
+        hairComputeShader.SetFloat("taperAmount", taperAmount);
 
         hairComputeShader.SetBuffer(kernel, "LeaderVertices", leaderBuffer);
         hairComputeShader.SetBuffer(kernel, "FollowerPositions", followerBuffer);
@@ -104,7 +103,6 @@ public class HairSim : MonoBehaviour
         int threadGroups = Mathf.CeilToInt(totalFollowerVertices / 32f);
         hairComputeShader.Dispatch(kernel, threadGroups, 1, 1);
 
-        // Update guide strand roots
         for (int i = 0; i < Strands.Count; i++)
         {
             if (Strands[i] != null)
@@ -119,31 +117,29 @@ public class HairSim : MonoBehaviour
     {
         if (followerRenderMaterial == null) return;
 
+        int strandCount = Strands.Count * followerCount;
+        int segmentCount = vertexCountPerStrand - 1;
+
         followerRenderMaterial.SetBuffer("FollowerPositions", followerBuffer);
+        followerRenderMaterial.SetInt("_VertexCountPerStrand", vertexCountPerStrand);
+
+        // New: Set thickness at root and tip
+        followerRenderMaterial.SetFloat("_RootThickness", rootThickness);
+        followerRenderMaterial.SetFloat("_TipThickness", tipThickness);
 
         Graphics.DrawProcedural(
             followerRenderMaterial,
             new Bounds(Vector3.zero, Vector3.one * 100f),
-            MeshTopology.LineStrip,                        // <--- IMPORTANT
-            vertexCountPerStrand,                          // vertices per strand
-            Strands.Count * followerCount                  // how many strands
+            MeshTopology.Triangles,
+            strandCount * segmentCount * 6
         );
     }
 
 
     void OnDestroy()
     {
-        if (leaderBuffer != null)
-        {
-            leaderBuffer.Release();
-            leaderBuffer = null;
-        }
-
-        if (followerBuffer != null)
-        {
-            followerBuffer.Release();
-            followerBuffer = null;
-        }
+        leaderBuffer?.Release();
+        followerBuffer?.Release();
     }
 
     void GenerateHairStrands()
@@ -187,8 +183,8 @@ public class HairSim : MonoBehaviour
         int leaderVertexCount = Strands.Count * vertexCountPerStrand;
         int totalFollowerVertices = Strands.Count * followerCount * vertexCountPerStrand;
 
-        leaderBuffer = new ComputeBuffer(leaderVertexCount, sizeof(float) * 7); // pos(3) + vel(3) + angle(1)
-        followerBuffer = new ComputeBuffer(totalFollowerVertices, sizeof(float) * 3); // pos only
+        leaderBuffer = new ComputeBuffer(leaderVertexCount, sizeof(float) * 7);
+        followerBuffer = new ComputeBuffer(totalFollowerVertices, sizeof(float) * 3);
     }
 
     Vector3 GetRandomPointOnSphereSurface()
