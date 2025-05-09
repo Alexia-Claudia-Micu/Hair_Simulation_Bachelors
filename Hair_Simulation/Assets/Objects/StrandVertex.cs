@@ -12,7 +12,9 @@ public class StrandVertex
     public float AngularVelocity;  // Speed of rotation
     public float Torque;           // Rotational force applied to the vertex
 
-    public float RestAngle;        // NEW: The angle the vertex wants to return to
+    public float RestAngle;        // The angle the vertex wants to return to
+    public float ForceThreshold;   //  Individual force threshold
+
 
     public StrandVertex(Vector3 position, float mass, bool isRoot)
     {
@@ -24,6 +26,7 @@ public class StrandVertex
         this.AngularVelocity = 0f;
         this.Torque = 0f;
         this.RestAngle = 0f;  // Initially set to 0, will be adjusted later
+        this.ForceThreshold = 0.6f;
     }
 
 
@@ -37,6 +40,7 @@ public class StrandVertex
         this.AngularVelocity = 0f;
         this.Torque = 0f;
         this.RestAngle = 0f;  // Initially set to 0, will be adjusted later
+        this.ForceThreshold = 0.6f;
     }
 
     public StrandVertex()
@@ -49,5 +53,6 @@ public class StrandVertex
         this.AngularVelocity = 0f;
         this.Torque = 0f;
         this.RestAngle = 0f;  // Initially set to 0, will be adjusted later
+        this.ForceThreshold = 0.6f;
     }
 }

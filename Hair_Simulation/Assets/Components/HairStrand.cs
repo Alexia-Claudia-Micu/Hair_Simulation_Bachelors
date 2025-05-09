@@ -22,43 +22,57 @@ public class HairStrand : MonoBehaviour
         Vertices.Clear();
         Springs.Clear();
 
-        GenerateStrand(rootPosition, segmentLength, numberOfVertices, curlFrequency, curlDiameter);
+        Vertices = HairGenerationUtil.GenerateOrganicCurledStrand(
+                    rootPosition,
+                    segmentLength,
+                    numberOfVertices,
+                    curlFrequency,
+                    curlDiameter,
+                    Constants.HairMass
+                );
+
+
+        //Vertices = HairGenerationUtil.GenerateCurledStrand(rootPosition, segmentLength, numberOfVertices, curlFrequency, curlDiameter, Constants.HairMass);
 
         for (int i = 0; i < Vertices.Count - 1; i++)
         {
             AddSpring(i, i + 1);
         }
+
+        ApplyForceThresholdGradient();
+
     }
 
-    void GenerateStrand(Vector3 rootPosition, float segmentLength, int numberOfVertices, float curlFrequency, float curlDiameter)
+    public void InitializeHairStrandFromVertices(List<Vector3> importedVertices)
     {
-        Vector3 currentPosition = rootPosition;
-        bool isRoot = true;
+        if (Vertices == null) Vertices = new List<StrandVertex>();
+        if (Springs == null) Springs = new List<StrandSpring>();
 
-        for (int i = 0; i < numberOfVertices; i++)
+        Vertices.Clear();
+        Springs.Clear();
+
+        Vertices = HairGenerationUtil.GenerateFromImportedVertices(importedVertices, Constants.HairMass);
+
+        for (int i = 0; i < Vertices.Count - 1; i++)
         {
-            float phase = i * curlFrequency * Mathf.PI * 2f;
-            float offsetX = Mathf.Sin(phase) * curlDiameter;
-            float offsetZ = Mathf.Cos(phase) * curlDiameter;
-            Vector3 offset = new Vector3(offsetX, 0, offsetZ);
+            AddSpring(i, i + 1);
+        }
 
-            float initialAngle = (curlDiameter > 0f) ? Mathf.Atan2(offsetZ, offsetX) : 0f;
+        ApplyForceThresholdGradient();
+    }
 
-            Vector3 finalPosition = currentPosition + offset;
 
-            StrandVertex newVertex = new StrandVertex(finalPosition, Constants.HairMass, isRoot)
-            {
-                Angle = initialAngle,
-                RestAngle = initialAngle,
-                Torque = 0f
-            };
+    void ApplyForceThresholdGradient()
+    {
+        int count = Vertices.Count;
 
-            Vertices.Add(newVertex);
-            currentPosition.y -= segmentLength;
-            isRoot = false;
+        for (int i = 0; i < count; i++)
+        {
+            int verticesBelow = count - i - 1;
+            float extraThreshold = Constants.ForceThresholdLoadFactor * (Constants.HairMass * verticesBelow);
+            Vertices[i].ForceThreshold = Constants.BaseForceThreshold + extraThreshold;
         }
     }
-
 
 
     void AddSpring(int from, int to)
@@ -180,9 +194,9 @@ public class HairStrand : MonoBehaviour
                 float rotationOffsetZ = Mathf.Cos(vertex.Angle) * Constants.CurlinessFactor;
                 Vector3 rotationOffset = new Vector3(rotationOffsetX, 0, rotationOffsetZ);
 
-                if (totalForceMagnitude > Constants.ForceThreshold)
+                if (totalForceMagnitude > vertex.ForceThreshold)
                 {
-                    float effectiveForce = totalForceMagnitude - Constants.ForceThreshold;
+                    float effectiveForce = totalForceMagnitude - vertex.ForceThreshold;
                     vertex.Velocity += (acceleration * deltaTime) * (effectiveForce / totalForceMagnitude);
                 }
 
@@ -222,9 +236,9 @@ public class HairStrand : MonoBehaviour
 
             vertexTo.Velocity -= (totalForceVector / vertexTo.Mass) * deltaTime;
 
-            if (totalForceMagnitude > Constants.ForceThreshold)
+            if (totalForceMagnitude > vertexTo.ForceThreshold)
             {
-                float effectiveForce = totalForceMagnitude - Constants.ForceThreshold;
+                float effectiveForce = totalForceMagnitude - vertexTo.ForceThreshold;
                 float torqueEffect = Constants.TorqueFactor * (effectiveForce / vertexTo.Mass);
                 vertexTo.Torque += torqueEffect;
             }
@@ -272,4 +286,24 @@ public class HairStrand : MonoBehaviour
             }
         }
     }
+
+    public void UpdateRoot(Vector3 newRootPosition, Vector3 newRootNormal)
+    {
+        if (Vertices.Count == 0) return;
+
+        // Move root position
+        Vector3 rootOffset = newRootPosition - Vertices[0].Position;
+        for (int i = 0; i < Vertices.Count; i++)
+        {
+            Vertices[i].Position += rootOffset;
+        }
+
+        // Reorient first segment based on the emitter's rotation
+        if (Vertices.Count > 1)
+        {
+            float restLength = Springs[0].Length;
+            Vertices[1].Position = Vertices[0].Position + newRootNormal * restLength;
+        }
+    }
+
 }

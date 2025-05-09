@@ -8,6 +8,11 @@ using UnityEngine;
  *  - Length          - 0.2
  *  - Frequency       - 0.2
  *  - Diameter        - 0.1
+ *  
+ *   Curly:
+ *  - Length          - 0.1
+ *  - Frequency       - 0.2
+ *  - Diameter        - 0.05
  * 
  * 
  * 
@@ -18,17 +23,18 @@ public class Constants
     public const float HairMass = 0.1f;
     public const float HairStiffness = 100f;
     public const float HairDamping = 0.8f;
-    public const float AngleStiffness = .5f;       // Softer spring
+    public const float AngleStiffness = 4.5f;       // Softer spring
     public const float RotationDamping = 0.93f;     // Less stiff
     public const float CurlinessFactor = 0.05f;
-    public const float ForceThreshold = 0.6f;
+    public const float BaseForceThreshold = 0.6f;
+    public const float ForceThresholdLoadFactor = 0.2f;
     public const float TorqueFactor = 0.01f;
     public const float PositionDamping = 0.98f;
     public const float RootAngleFollowSpeed = 12f; // Speed for root angle to follow surface normal (tweakable)
 
     public const float CollisionForceMultiplier = 100f;  // Higher = stronger reaction
     public const float CollisionFriction = 5f;         // Helps damp after impact
-    public const float MaxCollisionImpulse = 20f;          // Clamp to avoid big spikes
+    public const float MaxCollisionImpulse = 100f;          // Clamp to avoid big spikes
 
 
     // **GRAVITY & GENERAL PHYSICS**
