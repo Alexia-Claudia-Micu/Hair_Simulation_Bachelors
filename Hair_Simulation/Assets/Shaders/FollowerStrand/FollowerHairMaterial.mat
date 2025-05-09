@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FollowerHairMaterial
-  m_Shader: {fileID: 4800000, guid: 72e3ba01447d31343aa00237a648ae12, type: 3}
+  m_Shader: {fileID: 4800000, guid: 4b766d80231a63c49a93e151a9703898, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -24,7 +24,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Ints: []
-    m_Floats: []
-    m_Colors: []
+    m_Floats:
+    - _HairThickness: 0.01
+    - _RootThickness: 0.01
+    - _TipThickness: 0.002
+    m_Colors:
+    - _Color: {r: 0.5377358, g: 0.2554697, b: 0.088777125, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

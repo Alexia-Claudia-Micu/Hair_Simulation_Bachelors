@@ -7,16 +7,16 @@
       "RelativeMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|solutionrelative:assets\\shaders\\followerstrand\\hairfollowerribbonshader.shader||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|c:\\users\\alexia rtx top\\documents\\github\\hair_simulation_bachelors\\hair_simulation\\assets\\components\\hairsim.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|solutionrelative:assets\\components\\hairsim.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|C:\\Users\\Alexia RTX Top\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\assets\\shaders\\followerstrand\\hairfollowershader.shader||{3B902123-F8A7-4915-9F01-361F908088D0}",
       "RelativeMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|solutionrelative:assets\\shaders\\followerstrand\\hairfollowershader.shader||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|C:\\Users\\Alexia RTX Top\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\assets\\components\\hairmesh.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|solutionrelative:assets\\components\\hairmesh.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|c:\\users\\alexia rtx top\\documents\\github\\hair_simulation_bachelors\\hair_simulation\\assets\\components\\hairsim.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|solutionrelative:assets\\components\\hairsim.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|C:\\Users\\Alexia RTX Top\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\assets\\components\\hairstrand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -50,13 +50,13 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "HairSim.cs",
               "DocumentMoniker": "C:\\Users\\Alexia RTX Top\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\HairSim.cs",
               "RelativeDocumentMoniker": "Assets\\Components\\HairSim.cs",
               "ToolTip": "C:\\Users\\Alexia RTX Top\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\HairSim.cs",
               "RelativeToolTip": "Assets\\Components\\HairSim.cs",
-              "ViewState": "AgIAAFwAAAAAAAAAAAAiwHkAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABQAAAAAAAAAAAAQwCMAAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-30T14:27:34.717Z",
               "IsPinned": true,
@@ -70,7 +70,7 @@
               "RelativeDocumentMoniker": "Assets\\Shaders\\FollowerStrand\\HairFollowerRibbonShader.shader",
               "ToolTip": "C:\\Users\\Alexia RTX Top\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Shaders\\FollowerStrand\\HairFollowerRibbonShader.shader",
               "RelativeToolTip": "Assets\\Shaders\\FollowerStrand\\HairFollowerRibbonShader.shader",
-              "ViewState": "AgIAABkAAAAAAAAAAAAqwDMAAAAQAAAAAAAAAA==",
+              "ViewState": "AgIAAC8AAAAAAAAAAAAqwE4AAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002777|",
               "WhenOpened": "2025-05-02T17:10:09.035Z",
               "EditorCaption": ""
@@ -81,7 +81,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "HairMesh.cs",
               "DocumentMoniker": "C:\\Users\\Alexia RTX Top\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\HairMesh.cs",
               "RelativeDocumentMoniker": "Assets\\Components\\HairMesh.cs",
@@ -94,7 +94,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "HairFollowerShader.shader",
               "DocumentMoniker": "C:\\Users\\Alexia RTX Top\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Shaders\\FollowerStrand\\HairFollowerShader.shader",
               "RelativeDocumentMoniker": "Assets\\Shaders\\FollowerStrand\\HairFollowerShader.shader",

@@ -35,6 +35,7 @@ public class HairSim : MonoBehaviour
 
     public ComputeBuffer leaderBuffer { get; private set; }
     public ComputeBuffer followerBuffer { get; private set; }
+    public ComputeBuffer combinedRenderBuffer { get; private set; }
     public int vertexCountPerStrand { get; private set; }
 
     [Header("Follower Settings")]
@@ -68,9 +69,13 @@ public class HairSim : MonoBehaviour
 
     void FixedUpdate()
     {
-        int leaderCount = Strands.Count * vertexCountPerStrand;
-        GPUVertex[] leaderVertices = new GPUVertex[leaderCount];
+        int strandVertexCount = Strands.Count * vertexCountPerStrand;
+        int followerCountTotal = Strands.Count * followerCount * vertexCountPerStrand;
+        int guideCountTotal = strandVertexCount;
+        int combinedCount = followerCountTotal + guideCountTotal;
 
+        // Fill leader data (for compute shader)
+        GPUVertex[] leaderVertices = new GPUVertex[strandVertexCount];
         for (int s = 0; s < Strands.Count; s++)
         {
             var strand = Strands[s];
@@ -86,23 +91,41 @@ public class HairSim : MonoBehaviour
                 };
             }
         }
-
         leaderBuffer.SetData(leaderVertices);
 
-        int totalFollowerVertices = Strands.Count * followerCount * vertexCountPerStrand;
-        int kernel = hairComputeShader.FindKernel("CSMain");
+        // Allocate combined buffer
+        if (combinedRenderBuffer == null || combinedRenderBuffer.count != combinedCount)
+        {
+            combinedRenderBuffer?.Release();
+            combinedRenderBuffer = new ComputeBuffer(combinedCount, sizeof(float) * 3);
+        }
 
-        hairComputeShader.SetInt("vertexCountPerStrand", vertexCountPerStrand);
-        hairComputeShader.SetInt("followerCount", followerCount);
-        hairComputeShader.SetFloat("spawnRadius", spawnRadius);
-        hairComputeShader.SetFloat("taperAmount", taperAmount);
+        // Dispatch compute shader if followers are needed
+        if (followerCount > 0)
+        {
+            int kernel = hairComputeShader.FindKernel("CSMain");
+            hairComputeShader.SetInt("vertexCountPerStrand", vertexCountPerStrand);
+            hairComputeShader.SetInt("followerCount", followerCount);
+            hairComputeShader.SetFloat("spawnRadius", spawnRadius);
+            hairComputeShader.SetFloat("taperAmount", taperAmount);
+            hairComputeShader.SetBuffer(kernel, "LeaderVertices", leaderBuffer);
+            hairComputeShader.SetBuffer(kernel, "FollowerPositions", combinedRenderBuffer);
+            hairComputeShader.Dispatch(kernel, Mathf.CeilToInt(followerCountTotal / 32f), 1, 1);
+        }
 
-        hairComputeShader.SetBuffer(kernel, "LeaderVertices", leaderBuffer);
-        hairComputeShader.SetBuffer(kernel, "FollowerPositions", followerBuffer);
+        // Copy guide data into the second half of the combined buffer
+        Vector3[] guideData = new Vector3[guideCountTotal];
+        for (int s = 0; s < Strands.Count; s++)
+        {
+            for (int v = 0; v < vertexCountPerStrand; v++)
+            {
+                int idx = s * vertexCountPerStrand + v;
+                guideData[idx] = Strands[s].Vertices[v].Position;
+            }
+        }
+        combinedRenderBuffer.SetData(guideData, 0, followerCountTotal, guideCountTotal);
 
-        int threadGroups = Mathf.CeilToInt(totalFollowerVertices / 32f);
-        hairComputeShader.Dispatch(kernel, threadGroups, 1, 1);
-
+        // Update root positions
         for (int i = 0; i < Strands.Count; i++)
         {
             if (Strands[i] != null)
@@ -112,18 +135,15 @@ public class HairSim : MonoBehaviour
             }
         }
     }
-
     void LateUpdate()
     {
-        if (followerRenderMaterial == null) return;
+        if (followerRenderMaterial == null || combinedRenderBuffer == null) return;
 
-        int strandCount = Strands.Count * followerCount;
+        int strandCount = Strands.Count * (followerCount + 1); // +1 for guide
         int segmentCount = vertexCountPerStrand - 1;
 
-        followerRenderMaterial.SetBuffer("FollowerPositions", followerBuffer);
+        followerRenderMaterial.SetBuffer("FollowerPositions", combinedRenderBuffer);
         followerRenderMaterial.SetInt("_VertexCountPerStrand", vertexCountPerStrand);
-
-        // New: Set thickness at root and tip
         followerRenderMaterial.SetFloat("_RootThickness", rootThickness);
         followerRenderMaterial.SetFloat("_TipThickness", tipThickness);
 
@@ -140,6 +160,7 @@ public class HairSim : MonoBehaviour
     {
         leaderBuffer?.Release();
         followerBuffer?.Release();
+        combinedRenderBuffer?.Release();
     }
 
     void GenerateHairStrands()
@@ -181,11 +202,30 @@ public class HairSim : MonoBehaviour
     void InitComputeBuffers()
     {
         int leaderVertexCount = Strands.Count * vertexCountPerStrand;
-        int totalFollowerVertices = Strands.Count * followerCount * vertexCountPerStrand;
+        int followerVertexCount = Strands.Count * followerCount * vertexCountPerStrand;
+        int totalCombinedVertices = leaderVertexCount + followerVertexCount;
 
-        leaderBuffer = new ComputeBuffer(leaderVertexCount, sizeof(float) * 7);
-        followerBuffer = new ComputeBuffer(totalFollowerVertices, sizeof(float) * 3);
+        // Protect against invalid buffer sizes
+        if (leaderVertexCount <= 0)
+        {
+            Debug.LogWarning("Leader buffer not initialized: no strands or vertices.");
+            return;
+        }
+
+        leaderBuffer?.Release();
+        leaderBuffer = new ComputeBuffer(leaderVertexCount, sizeof(float) * 7); // pos+vel+angle
+
+        if (totalCombinedVertices > 0)
+        {
+            followerBuffer?.Release();
+            followerBuffer = new ComputeBuffer(totalCombinedVertices, sizeof(float) * 3); // position only
+        }
+        else
+        {
+            Debug.LogWarning("Follower buffer not created: zero total vertices.");
+        }
     }
+
 
     Vector3 GetRandomPointOnSphereSurface()
     {
