@@ -1,13 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class HairSimFromImported : MonoBehaviour
+public class HairSimFromImported : HairSimCore
 {
     public TextAsset importedHairJson;
     public GameObject hairStrandPrefab;
     public GameObject emitter;
-
-    private List<HairStrand> strands = new List<HairStrand>();
 
     void Start()
     {
@@ -18,31 +16,28 @@ public class HairSimFromImported : MonoBehaviour
         }
 
         HairStrandData[] strandData = JsonHelper.FromJson<HairStrandData>(importedHairJson.text);
+        List<HairStrand> importedStrands = new();
+        int vertexCount = 0;
 
         foreach (var strand in strandData)
         {
-            List<Vector3> points = new List<Vector3>();
+            List<Vector3> points = new();
             foreach (var v in strand.vertices)
                 points.Add(v.ToVector3());
 
             if (points.Count < 2) continue;
 
             GameObject strandObj = Instantiate(hairStrandPrefab);
-            HairStrand strandComponent = strandObj.GetComponent<HairStrand>();
-
-            if (strandComponent != null)
+            HairStrand strandComp = strandObj.GetComponent<HairStrand>();
+            if (strandComp != null)
             {
-                strandComponent.emitter = emitter;
-                strandComponent.InitializeHairStrandFromVertices(points);
-
-                strands.Add(strandComponent);
-                //  No root transform handling — keep original world positions
+                strandComp.emitter = emitter;
+                strandComp.InitializeHairStrandFromVertices(points);
+                importedStrands.Add(strandComp);
+                vertexCount = Mathf.Max(vertexCount, points.Count);
             }
         }
-    }
 
-    void FixedUpdate()
-    {
-        //  No position updates — everything stays as-is
+        Initialize(importedStrands, vertexCount);
     }
 }

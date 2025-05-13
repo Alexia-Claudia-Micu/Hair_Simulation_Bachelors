@@ -7,36 +7,53 @@ struct GPUVertex
     float angle;
 };
 
+struct StrandInfo
+{
+    int leaderStartIndex;
+    int vertexCount;
+    int followerStartIndex;
+};
+
 StructuredBuffer<GPUVertex> LeaderVertices;
+StructuredBuffer<StrandInfo> StrandInfos;
 RWStructuredBuffer<float3> FollowerPositions;
 
-int vertexCountPerStrand;
 int followerCount;
 float spawnRadius;
-float taperAmount; // <-- new
+float taperAmount;
+int strandCount;
 
 [numthreads(32, 1, 1)]
 void CSMain(uint3 id : SV_DispatchThreadID)
 {
-    uint totalVerticesPerStrandGroup = followerCount * vertexCountPerStrand;
-    uint strandIndex = id.x / totalVerticesPerStrandGroup;
+    uint globalID = id.x;
 
-    uint strandOffset = id.x % totalVerticesPerStrandGroup;
-    uint followerIndex = strandOffset / vertexCountPerStrand;
-    uint vertexIndex = strandOffset % vertexCountPerStrand;
+    if (globalID >= strandCount * followerCount)
+        return;
 
-    uint leaderIdx = strandIndex * vertexCountPerStrand + vertexIndex;
-    float3 basePos = LeaderVertices[leaderIdx].position;
+    uint strandIndex = globalID / followerCount;
+    uint followerIndex = globalID % followerCount;
 
-    float followerAngle = (6.2831 * followerIndex) / (float) followerCount;
+    StrandInfo info = StrandInfos[strandIndex];
+    uint leaderStart = info.leaderStartIndex;
+    uint vertexCount = info.vertexCount;
+    uint followerStart = info.followerStartIndex;
 
-    // Adjustable taper
-    float t = (float) vertexIndex / (float) (vertexCountPerStrand - 1);
-    float taper = lerp(1.0, taperAmount, t); // tip collapses based on taperAmount
+    float followerAngle = (6.2831 * followerIndex) / max(1.0, (float) followerCount);
 
-    float actualRadius = spawnRadius * taper;
+    for (uint v = 0; v < vertexCount; ++v)
+    {
+        uint leaderIdx = leaderStart + v;
+        uint outIdx = followerStart + followerIndex * vertexCount + v;
 
-    float3 offset = float3(cos(followerAngle), 0, sin(followerAngle)) * actualRadius;
+        float3 basePos = LeaderVertices[leaderIdx].position;
 
-    FollowerPositions[id.x] = basePos + offset;
+        float t = (float) v / max(1.0, (float) (vertexCount - 1));
+        float taper = lerp(1.0, taperAmount, t);
+        float radius = spawnRadius * taper;
+
+        float3 offset = float3(cos(followerAngle), 0, sin(followerAngle)) * radius;
+
+        FollowerPositions[outIdx] = basePos + offset;
+    }
 }

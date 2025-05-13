@@ -1,3 +1,4 @@
+
 Shader "Unlit/HairFollowerShader"
 {
     Properties { }
@@ -30,4 +31,4 @@ Shader "Unlit/HairFollowerShader"
             ENDCG
         }
     }
-}
+}  

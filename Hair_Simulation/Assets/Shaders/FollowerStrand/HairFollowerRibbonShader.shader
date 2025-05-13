@@ -9,22 +9,23 @@ Shader "Unlit/HairFollowerRibbonShader"
 
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType" = "Opaque" }
         Pass
         {
             ZWrite On
             Cull Off
+
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
 
             StructuredBuffer<float3> FollowerPositions;
+            StructuredBuffer<int3> SegmentRenderInfos;
 
             float _RootThickness;
             float _TipThickness;
             float4 _Color;
-            int _VertexCountPerStrand;
 
             struct appdata
             {
@@ -42,12 +43,14 @@ Shader "Unlit/HairFollowerRibbonShader"
             {
                 v2f o;
 
-                uint strandIndex = v.vertexID / (6 * (_VertexCountPerStrand - 1));
-                uint segmentIndex = (v.vertexID / 6) % (_VertexCountPerStrand - 1);
+                uint segmentID = v.vertexID / 6;
                 uint vertexInQuad = v.vertexID % 6;
 
-                uint idx0 = strandIndex * _VertexCountPerStrand + segmentIndex;
-                uint idx1 = strandIndex * _VertexCountPerStrand + segmentIndex + 1;
+                int3 segment = SegmentRenderInfos[segmentID];
+                uint idx0 = segment.x;
+                uint idx1 = idx0 + 1;
+                uint localSegment = segment.y;
+                uint segmentCount = segment.z;
 
                 float3 p0 = FollowerPositions[idx0];
                 float3 p1 = FollowerPositions[idx1];
@@ -59,7 +62,7 @@ Shader "Unlit/HairFollowerRibbonShader"
                 float3 viewDir = normalize(camPos - worldMid);
                 float3 right = normalize(cross(dir, viewDir));
 
-                float t = (float)segmentIndex / (_VertexCountPerStrand - 1);
+                float t = (float)localSegment / max(1.0, (float)segmentCount);
                 float thickness = lerp(_RootThickness, _TipThickness, t);
                 float3 offset = right * thickness * 0.5;
 
@@ -71,7 +74,7 @@ Shader "Unlit/HairFollowerRibbonShader"
                 else if (vertexInQuad == 4) worldPos = p1 - offset;
                 else worldPos = p0 - offset;
 
-                o.pos = UnityObjectToClipPos(float4(worldPos, 1));
+                o.pos = UnityObjectToClipPos(float4(worldPos, 1.0));
                 o.normal = normalize(cross(right, dir));
                 o.viewDir = viewDir;
                 return o;
