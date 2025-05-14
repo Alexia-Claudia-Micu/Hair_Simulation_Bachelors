@@ -7,14 +7,13 @@ public class StrandVertex
     public float Mass;
     public bool isRoot;
 
-    // Rotational properties
-    public float Angle;            // Current angle of the strand at this vertex
-    public float AngularVelocity;  // Speed of rotation
-    public float Torque;           // Rotational force applied to the vertex
+    // 3D Rotational properties
+    public Quaternion Rotation;           // Current 3D orientation of the strand at this vertex
+    public Vector3 AngularVelocity;       // Angular velocity in 3D (radians/sec)
+    public Vector3 Torque;                // Accumulated torque to apply
+    public Quaternion RestRotation;       // The target rotation the strand wants to return to
 
-    public float RestAngle;        // The angle the vertex wants to return to
-    public float ForceThreshold;   //  Individual force threshold
-
+    public float ForceThreshold;          // Individual force threshold
 
     public StrandVertex(Vector3 position, float mass, bool isRoot)
     {
@@ -22,37 +21,18 @@ public class StrandVertex
         this.Velocity = Vector3.zero;
         this.Mass = mass;
         this.isRoot = isRoot;
-        this.Angle = 0f;
-        this.AngularVelocity = 0f;
-        this.Torque = 0f;
-        this.RestAngle = 0f;  // Initially set to 0, will be adjusted later
+
+        this.Rotation = Quaternion.identity;
+        this.AngularVelocity = Vector3.zero;
+        this.Torque = Vector3.zero;
+        this.RestRotation = Quaternion.identity;
+
         this.ForceThreshold = 0.6f;
     }
-
 
     public StrandVertex(Vector3 position, float mass)
-    {
-        this.Position = position;
-        this.Velocity = Vector3.zero;
-        this.Mass = mass;
-        this.isRoot = false;
-        this.Angle = 0f;
-        this.AngularVelocity = 0f;
-        this.Torque = 0f;
-        this.RestAngle = 0f;  // Initially set to 0, will be adjusted later
-        this.ForceThreshold = 0.6f;
-    }
+        : this(position, mass, false) { }
 
     public StrandVertex()
-    {
-        this.Position = Vector3.zero;
-        this.Velocity = Vector3.zero;
-        this.Mass = 0;
-        this.isRoot = false;
-        this.Angle = 0f;
-        this.AngularVelocity = 0f;
-        this.Torque = 0f;
-        this.RestAngle = 0f;  // Initially set to 0, will be adjusted later
-        this.ForceThreshold = 0.6f;
-    }
+        : this(Vector3.zero, 0f, false) { }
 }

@@ -21,18 +21,7 @@ public class HairStrand : MonoBehaviour
 
         Vertices.Clear();
         Springs.Clear();
-
-        Vertices = HairGenerationUtil.GenerateOrganicCurledStrand(
-                    rootPosition,
-                    segmentLength,
-                    numberOfVertices,
-                    curlFrequency,
-                    curlDiameter,
-                    Constants.HairMass
-                );
-
-
-        //Vertices = HairGenerationUtil.GenerateCurledStrand(rootPosition, segmentLength, numberOfVertices, curlFrequency, curlDiameter, Constants.HairMass);
+        Vertices = HairGenerationUtil.GenerateCurledStrand(rootPosition, segmentLength, numberOfVertices, curlFrequency, curlDiameter, Constants.HairMass);
 
         for (int i = 0; i < Vertices.Count - 1; i++)
         {
@@ -170,29 +159,29 @@ public class HairStrand : MonoBehaviour
             }
             else
             {
-                // 1. Handle collision first
                 ApplyCollisionImpulse(ref vertex, deltaTime);
 
                 Vector3 gravityForce = Constants.Gravity * vertex.Mass;
                 Vector3 acceleration = gravityForce / vertex.Mass;
 
-                float totalForceMagnitude = gravityForce.magnitude + Mathf.Abs(vertex.Torque);
-                float deltaAngle = vertex.RestAngle - vertex.Angle;
+                float totalForceMagnitude = gravityForce.magnitude + vertex.Torque.magnitude;
 
-                if (Mathf.Sign(deltaAngle) != 0 && Mathf.Sign(vertex.AngularVelocity) != Mathf.Sign(deltaAngle))
+                // Restore rotation toward rest rotation
+                Quaternion deltaRot = vertex.RestRotation * Quaternion.Inverse(vertex.Rotation);
+                deltaRot.ToAngleAxis(out float angleDeg, out Vector3 axis);
+                if (!float.IsNaN(angleDeg) && angleDeg > 0.01f)
                 {
-                    float angleRestoration = Constants.AngleStiffness * deltaAngle;
-                    vertex.Torque += angleRestoration;
+                    float angleRad = angleDeg * Mathf.Deg2Rad;
+                    Vector3 restoringTorque = axis.normalized * (Constants.AngleStiffness * angleRad);
+                    vertex.Torque += restoringTorque;
                 }
 
                 vertex.AngularVelocity *= Constants.RotationDamping;
                 vertex.AngularVelocity += (vertex.Torque / vertex.Mass) * deltaTime;
-                vertex.Angle += vertex.AngularVelocity * deltaTime;
-                vertex.Angle = Mathf.Clamp(vertex.Angle, -Mathf.PI, Mathf.PI);
 
-                float rotationOffsetX = Mathf.Sin(vertex.Angle) * Constants.CurlinessFactor;
-                float rotationOffsetZ = Mathf.Cos(vertex.Angle) * Constants.CurlinessFactor;
-                Vector3 rotationOffset = new Vector3(rotationOffsetX, 0, rotationOffsetZ);
+                Quaternion deltaRotation = Quaternion.Euler(vertex.AngularVelocity * Mathf.Rad2Deg * deltaTime);
+                vertex.Rotation = deltaRotation * vertex.Rotation;
+                vertex.Rotation = Quaternion.Normalize(vertex.Rotation);
 
                 if (totalForceMagnitude > vertex.ForceThreshold)
                 {
@@ -200,10 +189,11 @@ public class HairStrand : MonoBehaviour
                     vertex.Velocity += (acceleration * deltaTime) * (effectiveForce / totalForceMagnitude);
                 }
 
-                vertex.Position += (vertex.Velocity * deltaTime * Constants.PositionDamping) + rotationOffset;
+                Vector3 curlOffset = vertex.Rotation * Vector3.forward * Constants.CurlinessFactor;
+                vertex.Position += (vertex.Velocity * deltaTime * Constants.PositionDamping) + curlOffset;
             }
 
-            vertex.Torque = 0f;
+            vertex.Torque = Vector3.zero;
         }
     }
 
@@ -239,23 +229,28 @@ public class HairStrand : MonoBehaviour
             if (totalForceMagnitude > vertexTo.ForceThreshold)
             {
                 float effectiveForce = totalForceMagnitude - vertexTo.ForceThreshold;
-                float torqueEffect = Constants.TorqueFactor * (effectiveForce / vertexTo.Mass);
+                Vector3 torqueEffect = direction.normalized * (Constants.TorqueFactor * (effectiveForce / vertexTo.Mass));
                 vertexTo.Torque += torqueEffect;
             }
 
-            float deltaAngle = vertexTo.RestAngle - vertexTo.Angle;
-
-            if (Mathf.Sign(deltaAngle) != 0 && Mathf.Sign(vertexTo.AngularVelocity) != Mathf.Sign(deltaAngle))
+            // Restore rotation (similar to UpdateVertices)
+            Quaternion deltaRot = vertexTo.RestRotation * Quaternion.Inverse(vertexTo.Rotation);
+            deltaRot.ToAngleAxis(out float angleDeg, out Vector3 axis);
+            if (!float.IsNaN(angleDeg) && angleDeg > 0.01f)
             {
-                float angleRestoration = Constants.AngleStiffness * deltaAngle;
-                vertexTo.Torque += angleRestoration;
+                float angleRad = angleDeg * Mathf.Deg2Rad;
+                Vector3 restoringTorque = axis.normalized * (Constants.AngleStiffness * angleRad);
+                vertexTo.Torque += restoringTorque;
             }
 
             vertexTo.AngularVelocity *= Constants.RotationDamping;
             vertexTo.AngularVelocity += (vertexTo.Torque / vertexTo.Mass) * deltaTime;
-            vertexTo.Angle += vertexTo.AngularVelocity * deltaTime;
-            vertexTo.Angle = Mathf.Clamp(vertexTo.Angle, -Mathf.PI, Mathf.PI);
-            vertexTo.Torque = 0f;
+
+            Quaternion deltaRotation = Quaternion.Euler(vertexTo.AngularVelocity * Mathf.Rad2Deg * deltaTime);
+            vertexTo.Rotation = deltaRotation * vertexTo.Rotation;
+            vertexTo.Rotation = Quaternion.Normalize(vertexTo.Rotation);
+
+            vertexTo.Torque = Vector3.zero;
         }
     }
 
@@ -267,9 +262,7 @@ public class HairStrand : MonoBehaviour
             Vector3 direction = (Vertices[i].Position - previousPosition).normalized;
             float restLength = Springs[i - 1].Length;
 
-            float rotationOffsetX = Mathf.Sin(Vertices[i].Angle) * Constants.CurlinessFactor;
-            float rotationOffsetZ = Mathf.Cos(Vertices[i].Angle) * Constants.CurlinessFactor;
-            Vector3 curlOffset = new Vector3(rotationOffsetX, 0, rotationOffsetZ);
+            Vector3 curlOffset = Vertices[i].Rotation * Vector3.forward * Constants.CurlinessFactor;
 
             Vertices[i].Position = previousPosition + direction * restLength + curlOffset;
         }
