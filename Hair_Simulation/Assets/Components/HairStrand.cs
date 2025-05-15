@@ -14,6 +14,19 @@ public class HairStrand : MonoBehaviour
     public LayerMask collisionMask;
     public float vertexCollisionRadius = 0.02f;
 
+    private Rigidbody emitterRb;
+    private TransformMotionTracker motionTracker;
+
+
+    void Start()
+    {
+        if (emitter != null)
+        {
+            emitterRb = emitter.GetComponent<Rigidbody>();
+            motionTracker = emitter.GetComponent<TransformMotionTracker>();
+        }
+    }
+
     public void InitializeHairStrand(Vector3 rootPosition, float segmentLength, int numberOfVertices, float curlFrequency, float curlDiameter)
     {
         if (Vertices == null) Vertices = new List<StrandVertex>();
@@ -142,10 +155,22 @@ public class HairStrand : MonoBehaviour
 
             if (vertex.isRoot)
             {
-                Rigidbody emitterRb = emitter.GetComponent<Rigidbody>();
-                Vector3 emitterLinearVelocity = emitterRb.linearVelocity;
-                Vector3 emitterAngularVelocity = emitterRb.angularVelocity;
-                Vector3 rootLocalOffset = vertex.Position - emitterRb.worldCenterOfMass;
+                Vector3 emitterLinearVelocity = Vector3.zero;
+                Vector3 emitterAngularVelocity = Vector3.zero;
+                Vector3 rootLocalOffset = vertex.Position - emitter.transform.position;
+
+                if (emitterRb != null)
+                {
+                    emitterLinearVelocity = emitterRb.linearVelocity;
+                    emitterAngularVelocity = emitterRb.angularVelocity;
+                    rootLocalOffset = vertex.Position - emitterRb.worldCenterOfMass;
+                }
+                else if (motionTracker != null)
+                {
+                    emitterLinearVelocity = motionTracker.LinearVelocity;
+                    emitterAngularVelocity = motionTracker.AngularVelocity;
+                    // Note: Keep rootLocalOffset based on Transform if no Rigidbody
+                }
 
                 Vector3 angularContribution = Vector3.Cross(emitterAngularVelocity, rootLocalOffset);
                 vertex.Velocity = emitterLinearVelocity + angularContribution;

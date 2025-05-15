@@ -8,6 +8,8 @@ public class HairSimFromImported : MonoBehaviour
     public GameObject emitter;
 
     private List<HairStrand> strands = new List<HairStrand>();
+    private List<Vector3> localRootPositions = new List<Vector3>();
+    private List<Vector3> localRootNormals = new List<Vector3>();
 
     void Start()
     {
@@ -34,15 +36,31 @@ public class HairSimFromImported : MonoBehaviour
             {
                 strandComponent.emitter = emitter;
                 strandComponent.InitializeHairStrandFromVertices(points);
-
                 strands.Add(strandComponent);
-                //  No root transform handling — keep original world positions
+
+                // Store local root position and direction
+                Vector3 worldRoot = points[0];
+                Vector3 direction = (points[1] - points[0]).normalized;
+
+                Vector3 localRoot = emitter.transform.InverseTransformPoint(worldRoot);
+                Vector3 localNormal = emitter.transform.InverseTransformDirection(direction);
+
+                localRootPositions.Add(localRoot);
+                localRootNormals.Add(localNormal);
             }
         }
     }
 
     void FixedUpdate()
     {
-        //  No position updates — everything stays as-is
+        for (int i = 0; i < strands.Count; i++)
+        {
+            if (strands[i] != null)
+            {
+                Vector3 newWorldRoot = emitter.transform.TransformPoint(localRootPositions[i]);
+                Vector3 newWorldNormal = emitter.transform.TransformDirection(localRootNormals[i]);
+                strands[i].UpdateRoot(newWorldRoot, newWorldNormal);
+            }
+        }
     }
 }
