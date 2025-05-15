@@ -22,17 +22,7 @@ public class HairStrand : MonoBehaviour
         Vertices.Clear();
         Springs.Clear();
 
-        Vertices = HairGenerationUtil.GenerateOrganicCurledStrand(
-                    rootPosition,
-                    segmentLength,
-                    numberOfVertices,
-                    curlFrequency,
-                    curlDiameter,
-                    Constants.HairMass
-                );
-
-
-        //Vertices = HairGenerationUtil.GenerateCurledStrand(rootPosition, segmentLength, numberOfVertices, curlFrequency, curlDiameter, Constants.HairMass);
+        Vertices = HairGenerationUtil.GenerateCurledStrand(rootPosition, segmentLength, numberOfVertices, curlFrequency, curlDiameter, Constants.HairMass);
 
         for (int i = 0; i < Vertices.Count - 1; i++)
         {
