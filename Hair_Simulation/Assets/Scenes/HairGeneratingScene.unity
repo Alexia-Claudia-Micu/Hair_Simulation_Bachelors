@@ -292,7 +292,6 @@ GameObject:
   - component: {fileID: 279746711}
   - component: {fileID: 279746714}
   - component: {fileID: 279746715}
-  - component: {fileID: 279746713}
   m_Layer: 0
   m_Name: HairSimulation
   m_TagString: Untagged
@@ -312,6 +311,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e33b3e5f6fae63640b84c9f7b762170e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hairComputeShader: {fileID: 7200000, guid: 09997b6f6dc3b0e40897bf78a0dbef6e, type: 3}
+  followerRenderMaterial: {fileID: 2100000, guid: fde0737f9abe91e44b36c7d8089a0cb6, type: 2}
+  followerCount: 5
+  spawnRadius: 0.05
+  taperAmount: 0.163
+  rootThickness: 0.01
+  tipThickness: 0.002
   hairStrandPrefab: {fileID: 861864545969438864, guid: 79d74a572854133499276c199996cbf4, type: 3}
   sphere: {fileID: 853006544}
   strandCount: 50
@@ -323,14 +329,6 @@ MonoBehaviour:
   curlFrequencyRandomness: 0
   baseCurlDiameter: 0.05
   curlDiameterRandomness: 0
-  hairComputeShader: {fileID: 7200000, guid: 09997b6f6dc3b0e40897bf78a0dbef6e, type: 3}
-  followerRenderMaterial: {fileID: 2100000, guid: fde0737f9abe91e44b36c7d8089a0cb6, type: 2}
-  followerCount: 5
-  spawnRadius: 0.05
-  taperAmount: 0.163
-  hairThickness: 0.01
-  rootThickness: 0.01
-  tipThickness: 0.002
 --- !u!4 &279746712
 Transform:
   m_ObjectHideFlags: 0
@@ -346,23 +344,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &279746713
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 279746710}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a35effeb0bfe5fb40823af65bd8b1521, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hairSim: {fileID: 279746711}
-  hairMaterial: {fileID: 2100000, guid: b01a59fae46297f41938361ad2b4f87d, type: 2}
-  radialSegments: 4
-  rootThickness: 0.01
-  tipThickness: 0.005
 --- !u!33 &279746714
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -503,7 +484,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 12.5, z: -10}
+  m_LocalPosition: {x: 0, y: 2, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -695,7 +676,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &616136920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1089,7 +1070,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1637913263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1102,6 +1083,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92ac5a963534c7c46a990d6b087e639e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hairComputeShader: {fileID: 7200000, guid: 09997b6f6dc3b0e40897bf78a0dbef6e, type: 3}
+  followerRenderMaterial: {fileID: 2100000, guid: fde0737f9abe91e44b36c7d8089a0cb6, type: 2}
+  followerCount: 5
+  spawnRadius: 0.04
+  taperAmount: 0.2
+  rootThickness: 0.02
+  tipThickness: 0.01
   importedHairJson: {fileID: 4900000, guid: 6b52c48be0c1fe04cbf34c35bd44229d, type: 3}
   hairStrandPrefab: {fileID: 861864545969438864, guid: 79d74a572854133499276c199996cbf4, type: 3}
   emitter: {fileID: 616136919}
@@ -1131,3 +1119,4 @@ SceneRoots:
   - {fileID: 1637913264}
   - {fileID: 853006548}
   - {fileID: 58265630}
+  - {fileID: 616136926}

@@ -26,9 +26,9 @@ Material:
     m_Ints: []
     m_Floats:
     - _HairThickness: 0.01
-    - _RootThickness: 0.01
-    - _TipThickness: 0.002
+    - _RootThickness: 0.02
+    - _TipThickness: 0.01
     m_Colors:
-    - _Color: {r: 0.5377358, g: 0.2554697, b: 0.088777125, a: 1}
+    - _Color: {r: 0.33962262, g: 0.1686309, b: 0.06888572, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

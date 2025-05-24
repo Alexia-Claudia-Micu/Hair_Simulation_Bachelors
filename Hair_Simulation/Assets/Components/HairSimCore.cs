@@ -49,11 +49,14 @@ public class HairSimCore : MonoBehaviour
     protected int totalRenderVerts = 0;
     protected int totalSegmentQuads = 0;
 
+    private int lastFollowerCount = -1;
+
     public void Initialize(List<HairStrand> strands, int _)
     {
         this.strands = strands;
         BuildStrandInfos();
         InitComputeBuffers();
+        lastFollowerCount = followerCount;
     }
 
     void BuildStrandInfos()
@@ -62,7 +65,6 @@ public class HairSimCore : MonoBehaviour
         segmentRenderInfos.Clear();
         totalGuideVerts = 0;
         totalFollowerVerts = 0;
-        totalSegmentQuads = 0;
 
         foreach (var strand in strands)
         {
@@ -99,7 +101,6 @@ public class HairSimCore : MonoBehaviour
                 }
             }
 
-            // Guide strand segments
             int guideStart = totalFollowerVerts + info.leaderStartIndex;
             for (int s = 0; s < segCount; s++)
             {
@@ -115,6 +116,17 @@ public class HairSimCore : MonoBehaviour
         totalSegmentQuads = segmentRenderInfos.Count;
     }
 
+    int ComputeTotalSegmentQuads()
+    {
+        int quads = 0;
+        foreach (var info in strandInfos)
+        {
+            int segCount = info.vertexCount - 1;
+            quads += segCount * (followerCount + 1);
+        }
+        return quads;
+    }
+
     void InitComputeBuffers()
     {
         leaderBuffer?.Release();
@@ -125,18 +137,30 @@ public class HairSimCore : MonoBehaviour
         if (strandInfos.Count > 0)
             strandInfoBuffer = new ComputeBuffer(strandInfos.Count, sizeof(int) * 3);
 
+        totalFollowerVerts = totalGuideVerts * followerCount;
+        totalRenderVerts = totalGuideVerts + totalFollowerVerts;
+
         combinedRenderBuffer?.Release();
         if (totalRenderVerts > 0)
             combinedRenderBuffer = new ComputeBuffer(totalRenderVerts, sizeof(float) * 3);
 
+        totalSegmentQuads = ComputeTotalSegmentQuads();
+
         segmentRenderInfoBuffer?.Release();
-        if (segmentRenderInfos.Count > 0)
-            segmentRenderInfoBuffer = new ComputeBuffer(segmentRenderInfos.Count, sizeof(int) * 3);
+        if (totalSegmentQuads > 0)
+            segmentRenderInfoBuffer = new ComputeBuffer(totalSegmentQuads, sizeof(int) * 3);
     }
 
     void FixedUpdate()
     {
         if (strands.Count == 0 || totalGuideVerts == 0) return;
+
+        if (lastFollowerCount != followerCount)
+        {
+            BuildStrandInfos();
+            InitComputeBuffers();
+            lastFollowerCount = followerCount;
+        }
 
         List<GPUVertex> packedLeaders = new();
         foreach (var strand in strands)
