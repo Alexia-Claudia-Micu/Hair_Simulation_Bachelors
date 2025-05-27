@@ -151,7 +151,7 @@ public class HairSimCore : MonoBehaviour
             segmentRenderInfoBuffer = new ComputeBuffer(totalSegmentQuads, sizeof(int) * 3);
     }
 
-    void FixedUpdate()
+    public void FixedUpdate()
     {
         if (strands.Count == 0 || totalGuideVerts == 0) return;
 

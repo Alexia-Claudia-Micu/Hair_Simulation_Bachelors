@@ -7,6 +7,9 @@ public class HairSimFromImported : HairSimCore
     public GameObject hairStrandPrefab;
     public GameObject emitter;
 
+    private List<Vector3> localRootPositions = new();
+    private List<Vector3> localRootNormals = new();
+
     void Start()
     {
         if (importedHairJson == null || hairStrandPrefab == null || emitter == null)
@@ -35,9 +38,34 @@ public class HairSimFromImported : HairSimCore
                 strandComp.InitializeHairStrandFromVertices(points);
                 importedStrands.Add(strandComp);
                 vertexCount = Mathf.Max(vertexCount, points.Count);
+
+                // Store local-space root data for update
+                Vector3 worldRoot = points[0];
+                Vector3 direction = (points[1] - points[0]).normalized;
+
+                Vector3 localRoot = emitter.transform.InverseTransformPoint(worldRoot);
+                Vector3 localNormal = emitter.transform.InverseTransformDirection(direction);
+
+                localRootPositions.Add(localRoot);
+                localRootNormals.Add(localNormal);
             }
         }
 
         Initialize(importedStrands, vertexCount);
+    }
+
+    void FixedUpdate()
+    {
+        base.FixedUpdate(); // run HairSimCore simulation logic
+
+        for (int i = 0; i < strands.Count; i++)
+        {
+            if (strands[i] != null)
+            {
+                Vector3 newWorldRoot = emitter.transform.TransformPoint(localRootPositions[i]);
+                Vector3 newWorldNormal = emitter.transform.TransformDirection(localRootNormals[i]);
+                strands[i].UpdateRoot(newWorldRoot, newWorldNormal);
+            }
+        }
     }
 }
