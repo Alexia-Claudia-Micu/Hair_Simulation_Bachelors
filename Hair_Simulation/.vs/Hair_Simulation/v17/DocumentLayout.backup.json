@@ -3,8 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\Alexia RTX Top\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|c:\\users\\alexia rtx top\\documents\\github\\hair_simulation_bachelors\\hair_simulation\\assets\\scripts\\ui\\imagegalleryloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\ui\\imagegalleryloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|c:\\users\\alexia rtx top\\documents\\github\\hair_simulation_bachelors\\hair_simulation\\assets\\scripts\\ui\\imagegalleryloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:assets\\scripts\\ui\\imagegalleryloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|c:\\users\\alexia rtx top\\documents\\github\\hair_simulation_bachelors\\hair_simulation\\assets\\scripts\\ui\\hairimporterui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -67,8 +67,7 @@
               "RelativeToolTip": "Assets\\Scripts\\UI\\HairImporterUI.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-25T16:30:50.198Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-25T16:30:50.198Z"
             },
             {
               "$type": "Document",
