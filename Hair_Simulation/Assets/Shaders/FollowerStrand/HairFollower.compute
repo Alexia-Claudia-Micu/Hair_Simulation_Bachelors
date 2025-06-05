@@ -28,10 +28,10 @@ void CSMain(uint3 id : SV_DispatchThreadID)
 {
     uint globalID = id.x;
 
-    if (globalID >= strandCount * followerCount)
+    if (globalID >= (uint) (strandCount * followerCount))
         return;
 
-    uint strandIndex = globalID / followerCount;
+    uint strandIndex = globalID / (uint)followerCount;
     uint followerIndex = globalID % followerCount;
 
     StrandInfo info = StrandInfos[strandIndex];
@@ -39,7 +39,10 @@ void CSMain(uint3 id : SV_DispatchThreadID)
     uint vertexCount = info.vertexCount;
     uint followerStart = info.followerStartIndex;
 
-    float followerAngle = (6.2831 * followerIndex) / max(1.0, (float) followerCount);
+    // Golden angle spiral (better disk coverage)
+    float goldenAngle = 2.39996323; // radians (~137.5 degrees)
+    float followerAngle = followerIndex * goldenAngle;
+    float r = sqrt((float) (followerIndex + 1) / (float) (followerCount + 1));
 
     for (uint v = 0; v < vertexCount; ++v)
     {
@@ -52,7 +55,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         float taper = lerp(1.0, taperAmount, t);
         float radius = spawnRadius * taper;
 
-        float3 offset = float3(cos(followerAngle), 0, sin(followerAngle)) * radius;
+        float3 offset = float3(cos(followerAngle), 0, sin(followerAngle)) * radius * r;
 
         FollowerPositions[outIdx] = basePos + offset;
     }

@@ -10,8 +10,20 @@ public class HairSimFromImported : HairSimCore
     private List<Vector3> localRootPositions = new();
     private List<Vector3> localRootNormals = new();
 
+
+
     void Start()
     {
+        if (InterSceneStatics.SelectedHairJson != null)
+        {
+            importedHairJson = InterSceneStatics.SelectedHairJson;
+        }
+
+        if (importedHairJson == null || hairStrandPrefab == null || emitter == null)
+        {
+            Debug.LogError("Assign all required references in inspector.");
+            return;
+        }
         if (importedHairJson == null || hairStrandPrefab == null || emitter == null)
         {
             Debug.LogError("Assign all required references in inspector.");
@@ -54,7 +66,7 @@ public class HairSimFromImported : HairSimCore
         Initialize(importedStrands, vertexCount);
     }
 
-    void FixedUpdate()
+    new void FixedUpdate()
     {
         base.FixedUpdate(); // run HairSimCore simulation logic
 

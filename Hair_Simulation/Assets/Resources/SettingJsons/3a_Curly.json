@@ -1,0 +1,16 @@
+{
+  "followerCount": 100,
+  "spawnRadius": 0.04,
+  "taperAmount": 0.163,
+  "rootThickness": 0.002,
+  "tipThickness": 0.001,
+  "strandCount": 100,
+  "baseSegmentLength": 0.1,
+  "segmentLengthRandomness": 0,
+  "baseVertexCount": 30,
+  "vertexCountRandomness": 0,
+  "baseCurlFrequency": 0.2,
+  "curlFrequencyRandomness": 0,
+  "baseCurlDiameter": 0.05,
+  "curlDiameterRandomness": 0
+}
