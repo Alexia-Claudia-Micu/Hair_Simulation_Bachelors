@@ -91,62 +91,62 @@ public class HairStrand : MonoBehaviour
         UpdateVertices();
     }
 
-void ApplyCollisionImpulse(ref StrandVertex vertex, float deltaTime)
-{
-    Collider[] hits = Physics.OverlapSphere(vertex.Position, vertexCollisionRadius, collisionMask);
-    foreach (var hit in hits)
+    void ApplyCollisionImpulse(ref StrandVertex vertex, float deltaTime)
     {
-        Vector3 closestPoint = hit.ClosestPoint(vertex.Position);
-        Vector3 toVertex = vertex.Position - closestPoint;
-        float distance = toVertex.magnitude;
-
-        Vector3 collisionNormal;
-        float penetrationDepth;
-
-        // Handle "inside collider" case
-        if (distance < 0.0001f)
+        Collider[] hits = Physics.OverlapSphere(vertex.Position, vertexCollisionRadius, collisionMask);
+        foreach (var hit in hits)
         {
-            Vector3 center = hit.bounds.center;
-            collisionNormal = (vertex.Position - center).normalized;
-            penetrationDepth = vertexCollisionRadius;
+            Vector3 closestPoint = hit.ClosestPoint(vertex.Position);
+            Vector3 toVertex = vertex.Position - closestPoint;
+            float distance = toVertex.magnitude;
+
+            Vector3 collisionNormal;
+            float penetrationDepth;
+
+            // Handle "inside collider" case
+            if (distance < 0.0001f)
+            {
+                Vector3 center = hit.bounds.center;
+                collisionNormal = (vertex.Position - center).normalized;
+                penetrationDepth = vertexCollisionRadius;
+            }
+            else
+            {
+                collisionNormal = toVertex / distance;
+                penetrationDepth = vertexCollisionRadius - distance;
+            }
+
+            if (penetrationDepth < 0.0001f)
+                continue;
+
+            Vector3 colliderVelocity = Vector3.zero;
+            Rigidbody rb = hit.attachedRigidbody;
+            if (rb != null)
+            {
+                colliderVelocity = rb.linearVelocity;
+            }
+
+            Vector3 relativeVelocity = vertex.Velocity - colliderVelocity;
+            float colliderIntoHair = Vector3.Dot(colliderVelocity, collisionNormal);
+            float vertexIntoCollider = -Vector3.Dot(vertex.Velocity, collisionNormal);
+            float combinedImpact = Mathf.Max(0f, vertexIntoCollider + colliderIntoHair);
+
+            // Stronger base response
+            float baseImpulse = 50f;
+            float impactBoost = Mathf.Clamp01(combinedImpact / 5f);
+            float impulseStrength = baseImpulse + (100f * impactBoost);
+
+            // Boosted depth scaling
+            float depthBoost = Mathf.Clamp(penetrationDepth / vertexCollisionRadius, 0.1f, 1.5f);
+            float finalImpulse = impulseStrength * depthBoost;
+
+            Vector3 impulse = collisionNormal * finalImpulse;
+            vertex.Velocity += impulse * deltaTime;
+
+            // Debug
+            Debug.DrawRay(vertex.Position, -collisionNormal * 0.15f, Color.red, 0.1f);
         }
-        else
-        {
-            collisionNormal = toVertex / distance;
-            penetrationDepth = vertexCollisionRadius - distance;
-        }
-
-        if (penetrationDepth < 0.0001f)
-            continue;
-
-        Vector3 colliderVelocity = Vector3.zero;
-        Rigidbody rb = hit.attachedRigidbody;
-        if (rb != null)
-        {
-            colliderVelocity = rb.linearVelocity;
-        }
-
-        Vector3 relativeVelocity = vertex.Velocity - colliderVelocity;
-        float colliderIntoHair = Vector3.Dot(colliderVelocity, collisionNormal);
-        float vertexIntoCollider = -Vector3.Dot(vertex.Velocity, collisionNormal);
-        float combinedImpact = Mathf.Max(0f, vertexIntoCollider + colliderIntoHair);
-
-        // Stronger base response
-        float baseImpulse = 50f;
-        float impactBoost = Mathf.Clamp01(combinedImpact / 5f);
-        float impulseStrength = baseImpulse + (100f * impactBoost);
-
-        // Boosted depth scaling
-        float depthBoost = Mathf.Clamp(penetrationDepth / vertexCollisionRadius, 0.1f, 1.5f);
-        float finalImpulse = impulseStrength * depthBoost;
-
-        Vector3 impulse = collisionNormal * finalImpulse;
-        vertex.Velocity += impulse * deltaTime;
-
-        // Debug
-        Debug.DrawRay(vertex.Position, -collisionNormal * 0.15f, Color.red, 0.1f);
     }
-}
 
     void UpdateVertices()
     {

@@ -1,22 +1,4 @@
-
 using UnityEngine;
-
-/*
- * Presets for hair types
- * 
- * Curly:
- *  - Length          - 0.2
- *  - Frequency       - 0.2
- *  - Diameter        - 0.1
- *  
- *   Curly:
- *  - Length          - 0.1
- *  - Frequency       - 0.2
- *  - Diameter        - 0.05
- * 
- * 
- * 
- */
 
 public class Constants
 {
@@ -50,23 +32,6 @@ public class Constants
     public static readonly float BendingDamping = 1f; // Damping for bending motion
 
 
-    // **VOLUME & ENVIRONMENTAL INTERACTIONS**
-    public static readonly float WindInfluence = 0.1f; // Controls how much wind affects hair
-    public static readonly float WindStrength = 2.0f; // Wind force applied
-    public static readonly float AirFriction = 0.02f; // Air resistance
-
-    // **LOD SETTINGS**
-    public static readonly float LODDistanceThreshold = 10f; // Distance at which LOD applies
-    public static readonly int LODStrandReduction = 2; // Reduction factor for performance
-
-    // **SOLVER SETTINGS**
-    public static readonly int SolverIterations = 10; // How many physics iterations per frame
-    public static readonly int SolverSubsteps = 4; // Number of substeps per frame
-
-    public static readonly float MinHairTaper = 0.2f; // Ensures minimum taper width
-
-
     public const float AngularForceThreshold = 0.3f;
-
 
 }
