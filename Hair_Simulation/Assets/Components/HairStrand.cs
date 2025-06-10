@@ -1,12 +1,11 @@
-
 using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
-
 public class HairStrand : MonoBehaviour
 {
     public GameObject emitter;
+    public HairPhysicsSettings settings;
 
     public List<StrandVertex> Vertices;
     public List<StrandSpring> Springs;
@@ -16,7 +15,6 @@ public class HairStrand : MonoBehaviour
 
     private Rigidbody emitterRb;
     private TransformMotionTracker motionTracker;
-
 
     void Start()
     {
@@ -35,7 +33,7 @@ public class HairStrand : MonoBehaviour
         Vertices.Clear();
         Springs.Clear();
 
-        Vertices = HairGenerationUtil.GenerateCurledStrand(rootPosition, segmentLength, numberOfVertices, curlFrequency, curlDiameter, Constants.HairMass);
+        Vertices = HairGenerationUtil.GenerateCurledStrand(rootPosition, segmentLength, numberOfVertices, curlFrequency, curlDiameter, settings.HairMass);
 
         for (int i = 0; i < Vertices.Count - 1; i++)
         {
@@ -43,7 +41,6 @@ public class HairStrand : MonoBehaviour
         }
 
         ApplyForceThresholdGradient();
-
     }
 
     public void InitializeHairStrandFromVertices(List<Vector3> importedVertices)
@@ -54,7 +51,7 @@ public class HairStrand : MonoBehaviour
         Vertices.Clear();
         Springs.Clear();
 
-        Vertices = HairGenerationUtil.GenerateFromImportedVertices(importedVertices, Constants.HairMass);
+        Vertices = HairGenerationUtil.GenerateFromImportedVertices(importedVertices, settings.HairMass);
 
         for (int i = 0; i < Vertices.Count - 1; i++)
         {
@@ -64,7 +61,6 @@ public class HairStrand : MonoBehaviour
         ApplyForceThresholdGradient();
     }
 
-
     void ApplyForceThresholdGradient()
     {
         int count = Vertices.Count;
@@ -72,11 +68,10 @@ public class HairStrand : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             int verticesBelow = count - i - 1;
-            float extraThreshold = Constants.ForceThresholdLoadFactor * (Constants.HairMass * verticesBelow);
-            Vertices[i].ForceThreshold = Constants.BaseForceThreshold + extraThreshold;
+            float extraThreshold = settings.ForceThresholdLoadFactor * (settings.HairMass * verticesBelow);
+            Vertices[i].ForceThreshold = settings.BaseForceThreshold + extraThreshold;
         }
     }
-
 
     void AddSpring(int from, int to)
     {
@@ -96,28 +91,15 @@ public class HairStrand : MonoBehaviour
         Collider[] hits = Physics.OverlapSphere(vertex.Position, vertexCollisionRadius, collisionMask);
         foreach (var hit in hits)
         {
-            Vector3 closestPoint = hit.ClosestPoint(vertex.Position);
-            Vector3 toVertex = vertex.Position - closestPoint;
+            Vector3 colliderCenter = hit.bounds.center;
+            Vector3 toVertex = vertex.Position - colliderCenter;
             float distance = toVertex.magnitude;
+            if (distance < 0.0001f) continue;
 
-            Vector3 collisionNormal;
-            float penetrationDepth;
-
-            // Handle "inside collider" case
-            if (distance < 0.0001f)
-            {
-                Vector3 center = hit.bounds.center;
-                collisionNormal = (vertex.Position - center).normalized;
-                penetrationDepth = vertexCollisionRadius;
-            }
-            else
-            {
-                collisionNormal = toVertex / distance;
-                penetrationDepth = vertexCollisionRadius - distance;
-            }
-
-            if (penetrationDepth < 0.0001f)
-                continue;
+            Vector3 collisionNormal = toVertex.normalized;
+            float desiredDistance = hit.bounds.extents.magnitude + vertexCollisionRadius;
+            float penetrationDepth = desiredDistance - distance;
+            if (penetrationDepth < 0.001f) continue;
 
             Vector3 colliderVelocity = Vector3.zero;
             Rigidbody rb = hit.attachedRigidbody;
@@ -131,20 +113,25 @@ public class HairStrand : MonoBehaviour
             float vertexIntoCollider = -Vector3.Dot(vertex.Velocity, collisionNormal);
             float combinedImpact = Mathf.Max(0f, vertexIntoCollider + colliderIntoHair);
 
-            // Stronger base response
-            float baseImpulse = 50f;
-            float impactBoost = Mathf.Clamp01(combinedImpact / 5f);
-            float impulseStrength = baseImpulse + (100f * impactBoost);
+            if (combinedImpact > 0f)
+            {
+                float impulseStrength;
 
-            // Boosted depth scaling
-            float depthBoost = Mathf.Clamp(penetrationDepth / vertexCollisionRadius, 0.1f, 1.5f);
-            float finalImpulse = impulseStrength * depthBoost;
+                if (penetrationDepth > 1f)
+                {
+                    impulseStrength = settings.CollisionForceMultiplier;
+                }
+                else
+                {
+                    float t = Mathf.Clamp01(combinedImpact / settings.CollisionFriction);
+                    impulseStrength = Mathf.Lerp(8f, settings.MaxCollisionImpulse, t);
+                }
 
-            Vector3 impulse = collisionNormal * finalImpulse;
-            vertex.Velocity += impulse * deltaTime;
+                float finalImpulse = impulseStrength * penetrationDepth;
+                Vector3 impulse = collisionNormal * finalImpulse;
 
-            // Debug
-            Debug.DrawRay(vertex.Position, -collisionNormal * 0.15f, Color.red, 0.1f);
+                vertex.Velocity += impulse * deltaTime;
+            }
         }
     }
 
@@ -172,7 +159,6 @@ public class HairStrand : MonoBehaviour
                 {
                     emitterLinearVelocity = motionTracker.LinearVelocity;
                     emitterAngularVelocity = motionTracker.AngularVelocity;
-                    // Note: Keep rootLocalOffset based on Transform if no Rigidbody
                 }
 
                 Vector3 angularContribution = Vector3.Cross(emitterAngularVelocity, rootLocalOffset);
@@ -188,10 +174,9 @@ public class HairStrand : MonoBehaviour
             }
             else
             {
-                // 1. Handle collision first
                 ApplyCollisionImpulse(ref vertex, deltaTime);
 
-                Vector3 gravityForce = Constants.Gravity * vertex.Mass;
+                Vector3 gravityForce = settings.Gravity * vertex.Mass;
                 Vector3 acceleration = gravityForce / vertex.Mass;
 
                 float totalForceMagnitude = gravityForce.magnitude + Mathf.Abs(vertex.Torque);
@@ -199,17 +184,17 @@ public class HairStrand : MonoBehaviour
 
                 if (Mathf.Sign(deltaAngle) != 0 && Mathf.Sign(vertex.AngularVelocity) != Mathf.Sign(deltaAngle))
                 {
-                    float angleRestoration = Constants.AngleStiffness * deltaAngle;
+                    float angleRestoration = settings.AngleStiffness * deltaAngle;
                     vertex.Torque += angleRestoration;
                 }
 
-                vertex.AngularVelocity *= Constants.RotationDamping;
+                vertex.AngularVelocity *= settings.RotationDamping;
                 vertex.AngularVelocity += (vertex.Torque / vertex.Mass) * deltaTime;
                 vertex.Angle += vertex.AngularVelocity * deltaTime;
                 vertex.Angle = Mathf.Clamp(vertex.Angle, -Mathf.PI, Mathf.PI);
 
-                float rotationOffsetX = Mathf.Sin(vertex.Angle) * Constants.CurlinessFactor;
-                float rotationOffsetZ = Mathf.Cos(vertex.Angle) * Constants.CurlinessFactor;
+                float rotationOffsetX = Mathf.Sin(vertex.Angle) * settings.CurlinessFactor;
+                float rotationOffsetZ = Mathf.Cos(vertex.Angle) * settings.CurlinessFactor;
                 Vector3 rotationOffset = new Vector3(rotationOffsetX, 0, rotationOffsetZ);
 
                 if (totalForceMagnitude > vertex.ForceThreshold)
@@ -218,7 +203,7 @@ public class HairStrand : MonoBehaviour
                     vertex.Velocity += (acceleration * deltaTime) * (effectiveForce / totalForceMagnitude);
                 }
 
-                vertex.Position += (vertex.Velocity * deltaTime * Constants.PositionDamping) + rotationOffset;
+                vertex.Position += (vertex.Velocity * deltaTime * settings.PositionDamping) + rotationOffset;
             }
 
             vertex.Torque = 0f;
@@ -238,11 +223,11 @@ public class HairStrand : MonoBehaviour
             float currentLength = direction.magnitude;
             direction.Normalize();
 
-            float springForceMagnitude = Constants.HairStiffness * (currentLength - spring.Length);
+            float springForceMagnitude = settings.HairStiffness * (currentLength - spring.Length);
             Vector3 springForce = springForceMagnitude * direction;
 
             Vector3 relativeVelocity = vertexTo.Velocity - vertexFrom.Velocity;
-            Vector3 dampingForce = Constants.HairDamping * relativeVelocity;
+            Vector3 dampingForce = settings.HairDamping * relativeVelocity;
 
             Vector3 totalForceVector = springForce + dampingForce;
             float totalForceMagnitude = totalForceVector.magnitude;
@@ -257,7 +242,7 @@ public class HairStrand : MonoBehaviour
             if (totalForceMagnitude > vertexTo.ForceThreshold)
             {
                 float effectiveForce = totalForceMagnitude - vertexTo.ForceThreshold;
-                float torqueEffect = Constants.TorqueFactor * (effectiveForce / vertexTo.Mass);
+                float torqueEffect = settings.TorqueFactor * (effectiveForce / vertexTo.Mass);
                 vertexTo.Torque += torqueEffect;
             }
 
@@ -265,11 +250,11 @@ public class HairStrand : MonoBehaviour
 
             if (Mathf.Sign(deltaAngle) != 0 && Mathf.Sign(vertexTo.AngularVelocity) != Mathf.Sign(deltaAngle))
             {
-                float angleRestoration = Constants.AngleStiffness * deltaAngle;
+                float angleRestoration = settings.AngleStiffness * deltaAngle;
                 vertexTo.Torque += angleRestoration;
             }
 
-            vertexTo.AngularVelocity *= Constants.RotationDamping;
+            vertexTo.AngularVelocity *= settings.RotationDamping;
             vertexTo.AngularVelocity += (vertexTo.Torque / vertexTo.Mass) * deltaTime;
             vertexTo.Angle += vertexTo.AngularVelocity * deltaTime;
             vertexTo.Angle = Mathf.Clamp(vertexTo.Angle, -Mathf.PI, Mathf.PI);
@@ -285,8 +270,8 @@ public class HairStrand : MonoBehaviour
             Vector3 direction = (Vertices[i].Position - previousPosition).normalized;
             float restLength = Springs[i - 1].Length;
 
-            float rotationOffsetX = Mathf.Sin(Vertices[i].Angle) * Constants.CurlinessFactor;
-            float rotationOffsetZ = Mathf.Cos(Vertices[i].Angle) * Constants.CurlinessFactor;
+            float rotationOffsetX = Mathf.Sin(Vertices[i].Angle) * settings.CurlinessFactor;
+            float rotationOffsetZ = Mathf.Cos(Vertices[i].Angle) * settings.CurlinessFactor;
             Vector3 curlOffset = new Vector3(rotationOffsetX, 0, rotationOffsetZ);
 
             Vertices[i].Position = previousPosition + direction * restLength + curlOffset;
@@ -309,19 +294,16 @@ public class HairStrand : MonoBehaviour
     {
         if (Vertices.Count == 0) return;
 
-        // Move root position
         Vector3 rootOffset = newRootPosition - Vertices[0].Position;
         for (int i = 0; i < Vertices.Count; i++)
         {
             Vertices[i].Position += rootOffset;
         }
 
-        // Reorient first segment based on the emitter's rotation
         if (Vertices.Count > 1)
         {
             float restLength = Springs[0].Length;
             Vertices[1].Position = Vertices[0].Position + newRootNormal * restLength;
         }
     }
-
 }

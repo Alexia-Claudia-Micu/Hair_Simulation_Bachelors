@@ -7,6 +7,9 @@ public class HairSim : HairSimCore
     public GameObject hairStrandPrefab;
     public GameObject sphere;
 
+    [Header("Settings JSON")]
+    public TextAsset defaultSettingsJson;
+
     [Header("Hair Cluster Settings")]
     public int strandCount = 20;
 
@@ -28,6 +31,8 @@ public class HairSim : HairSimCore
 
     void Start()
     {
+        LoadSettingsFromJson();
+
         var generatedStrands = new List<HairStrand>();
         int vertexCount = 0;
 
@@ -53,6 +58,47 @@ public class HairSim : HairSimCore
         }
 
         Initialize(generatedStrands, vertexCount);
+    }
+
+    void LoadSettingsFromJson()
+    {
+        TextAsset jsonToLoad = InterSceneStatics.SelectedSettingsJson != null
+            ? InterSceneStatics.SelectedSettingsJson
+            : defaultSettingsJson;
+
+        if (jsonToLoad == null)
+        {
+            Debug.LogWarning("No settings JSON provided.");
+            return;
+        }
+
+        HairSimSettings settings = JsonUtility.FromJson<HairSimSettings>(jsonToLoad.text);
+
+        base.followerCount = settings.followerCount;
+        base.spawnRadius = settings.spawnRadius;
+        base.taperAmount = settings.taperAmount;
+        base.rootThickness = settings.rootThickness;
+        base.tipThickness = settings.tipThickness;
+
+        strandCount = settings.strandCount;
+        baseSegmentLength = settings.baseSegmentLength;
+        segmentLengthRandomness = settings.segmentLengthRandomness;
+
+        baseVertexCount = settings.baseVertexCount;
+        vertexCountRandomness = settings.vertexCountRandomness;
+
+        baseCurlFrequency = settings.baseCurlFrequency;
+        curlFrequencyRandomness = settings.curlFrequencyRandomness;
+
+        baseCurlDiameter = settings.baseCurlDiameter;
+        curlDiameterRandomness = settings.curlDiameterRandomness;
+
+        // Updated UI sync using FindFirstObjectByType
+        HairSimSettingsUI ui = Object.FindFirstObjectByType<HairSimSettingsUI>();
+        if (ui != null && ui.hairSim == this)
+        {
+            ui.SyncWithSim();
+        }
     }
 
     Vector3 GetRandomPointOnSphereSurface()

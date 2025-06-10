@@ -17,14 +17,14 @@ MonoBehaviour:
   HairDamping: 0.8
   AngleStiffness: 4.5
   RotationDamping: 0.93
-  CurlinessFactor: 0.001
+  CurlinessFactor: 0.05
   BaseForceThreshold: 0.6
   ForceThresholdLoadFactor: 0.2
   TorqueFactor: 0.01
   PositionDamping: 0.98
   RootAngleFollowSpeed: 12
   AngularForceThreshold: 0.3
-  CollisionForceMultiplier: 100
-  CollisionFriction: 5
+  CollisionForceMultiplier: 300
+  CollisionFriction: 15
   MaxCollisionImpulse: 100
   Gravity: {x: 0, y: -9.81, z: 0}
