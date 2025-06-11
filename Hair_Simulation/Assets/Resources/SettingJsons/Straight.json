@@ -4,13 +4,13 @@
   "taperAmount": 0.163,
   "rootThickness": 0.002,
   "tipThickness": 0.001,
-  "strandCount": 200,
+  "strandCount": 100,
   "baseSegmentLength": 0.3,
   "segmentLengthRandomness": 0,
   "baseVertexCount": 30,
   "vertexCountRandomness": 0,
   "baseCurlFrequency": 5,
   "curlFrequencyRandomness": 0,
-  "baseCurlDiameter": 0.2,
+  "baseCurlDiameter": 0.1,
   "curlDiameterRandomness": 0
 }
