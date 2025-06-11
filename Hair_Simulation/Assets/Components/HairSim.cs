@@ -93,7 +93,6 @@ public class HairSim : HairSimCore
         baseCurlDiameter = settings.baseCurlDiameter;
         curlDiameterRandomness = settings.curlDiameterRandomness;
 
-        // Updated UI sync using FindFirstObjectByType
         HairSimSettingsUI ui = Object.FindFirstObjectByType<HairSimSettingsUI>();
         if (ui != null && ui.hairSim == this)
         {

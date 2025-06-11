@@ -51,7 +51,6 @@ public class HairSimFromImported : HairSimCore
                 importedStrands.Add(strandComp);
                 vertexCount = Mathf.Max(vertexCount, points.Count);
 
-                // Store local-space root data for update
                 Vector3 worldRoot = points[0];
                 Vector3 direction = (points[1] - points[0]).normalized;
 
@@ -68,7 +67,7 @@ public class HairSimFromImported : HairSimCore
 
     new void FixedUpdate()
     {
-        base.FixedUpdate(); // run HairSimCore simulation logic
+        base.FixedUpdate();
 
         for (int i = 0; i < strands.Count; i++)
         {
