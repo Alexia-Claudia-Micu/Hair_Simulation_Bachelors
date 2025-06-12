@@ -12,8 +12,8 @@ public class ObjectMovement : MonoBehaviour
     public KeyCode spinLeftKey;
 
     public float moveSpeed = 2f;
-    public float torqueAmount = .1f;          // Smaller = slower rotation
-    public float angularDamping = 5f;        // How quickly it stops spinning
+    public float torqueAmount = .1f;         
+    public float angularDamping = 5f;      
     public float maxAngularSpeed = 2f;
 
     private Rigidbody rb;
@@ -27,14 +27,13 @@ public class ObjectMovement : MonoBehaviour
             return;
         }
 
-        rb.maxAngularVelocity = 100f; // Optional: ensure not clamped
+        rb.maxAngularVelocity = 100f; 
     }
 
     void FixedUpdate()
     {
         if (rb == null) return;
 
-        // --- Movement ---
         Vector3 moveDirection = Vector3.zero;
         if (Input.GetKey(rightKey)) moveDirection.x = 1;
         if (Input.GetKey(leftKey)) moveDirection.x = -1;
@@ -45,14 +44,12 @@ public class ObjectMovement : MonoBehaviour
 
         rb.linearVelocity = moveDirection.normalized * moveSpeed;
 
-        // --- Rotation ---
         float rotationInput = 0;
         if (Input.GetKey(spinLeftKey)) rotationInput = -1;
         if (Input.GetKey(spinRightKey)) rotationInput = 1;
 
         if (rotationInput != 0)
         {
-            // Only apply torque if we're under the max spin speed
             if (rb.angularVelocity.magnitude < maxAngularSpeed)
             {
                 Vector3 torque = Vector3.up * rotationInput * torqueAmount;
@@ -61,7 +58,6 @@ public class ObjectMovement : MonoBehaviour
         }
         else
         {
-            // Smooth stop when no input
             rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.fixedDeltaTime * angularDamping);
         }
 

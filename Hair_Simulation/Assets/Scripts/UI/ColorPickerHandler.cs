@@ -4,7 +4,7 @@ using Xenia.ColorPicker;
 public class ColorPickerHandler : MonoBehaviour
 {
     public Material targetMaterial;
-    public ColorPicker colorPicker; // Reference to the ColorPicker component
+    public ColorPicker colorPicker;
 
     void Start()
     {

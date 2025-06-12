@@ -15,7 +15,7 @@ public class HairSimSettingsUI : MonoBehaviour
 
     [Header("Slider")]
     public Slider taperSlider;
-    public TMP_Text taperValueLabel; // Optional: shows slider value
+    public TMP_Text taperValueLabel;
 
     void Start()
     {
@@ -27,7 +27,6 @@ public class HairSimSettingsUI : MonoBehaviour
 
         SyncWithSim();
 
-        // Initialize UI with current HairSim values
         followerCountInput.text = hairSim.followerCount.ToString();
         spawnRadiusInput.text = hairSim.spawnRadius.ToString("F4");
         rootThicknessInput.text = hairSim.rootThickness.ToString("F4");
@@ -36,7 +35,6 @@ public class HairSimSettingsUI : MonoBehaviour
         taperSlider.value = hairSim.taperAmount;
         if (taperValueLabel != null)
             taperValueLabel.text = hairSim.taperAmount.ToString("F2");
-        // Add listeners
         followerCountInput.onEndEdit.AddListener(OnFollowerCountChanged);
         spawnRadiusInput.onEndEdit.AddListener(OnSpawnRadiusChanged);
         rootThicknessInput.onEndEdit.AddListener(OnRootThicknessChanged);

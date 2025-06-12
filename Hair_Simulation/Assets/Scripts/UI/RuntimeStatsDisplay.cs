@@ -35,14 +35,12 @@ public class RuntimeStatsDisplay : MonoBehaviour
 
     void Update()
     {
-        // --- Smoothing for FPS/CPU ---
         smoothedDeltaTime = Mathf.Lerp(smoothedDeltaTime, Time.unscaledDeltaTime, 0.05f);
 
         float currentFps = Mathf.Clamp(1f / smoothedDeltaTime, 1f, 999f);
         float currentCpu = Mathf.Clamp(smoothedDeltaTime * 1000f, 0.01f, 200f);
         statUpdateTimer += Time.unscaledDeltaTime;
 
-        // --- Update FPS if needed ---
         if ((Mathf.Abs(currentFps - lastFps) >= fpsChangeThreshold) || statUpdateTimer >= updateInterval)
         {
             if (statTexts.TryGetValue("FPS", out var fpsText))
@@ -50,7 +48,6 @@ public class RuntimeStatsDisplay : MonoBehaviour
             lastFps = currentFps;
         }
 
-        // --- Update CPU if needed ---
         if ((Mathf.Abs(currentCpu - lastCpu) >= cpuChangeThreshold) || statUpdateTimer >= updateInterval)
         {
             if (statTexts.TryGetValue("CPU (ms)", out var cpuText))
@@ -58,7 +55,6 @@ public class RuntimeStatsDisplay : MonoBehaviour
             lastCpu = currentCpu;
         }
 
-        // Tris & Verts (Editor only)
 #if UNITY_EDITOR
         int tris = UnityEditor.UnityStats.triangles;
         int verts = UnityEditor.UnityStats.vertices;
@@ -69,7 +65,6 @@ public class RuntimeStatsDisplay : MonoBehaviour
         if (statTexts.TryGetValue("Verts", out var vertsText))
             vertsText.text = $"Verts: {FormatCount(verts)}";
 #else
-        // If you want runtime approximations, insert logic here
         if (statTexts.TryGetValue("Tris", out var trisText))
             trisText.text = $"Tris: N/A";
         if (statTexts.TryGetValue("Verts", out var vertsText))

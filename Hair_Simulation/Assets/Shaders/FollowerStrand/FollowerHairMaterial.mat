@@ -29,6 +29,6 @@ Material:
     - _RootThickness: 0.02
     - _TipThickness: 0.01
     m_Colors:
-    - _Color: {r: 0.50603956, g: 0.28973293, b: 0.18590578, a: 1}
+    - _Color: {r: 0.3170806, g: 0.06139642, b: 0.06139642, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

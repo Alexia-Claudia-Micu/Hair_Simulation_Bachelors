@@ -10,7 +10,6 @@ public class BoneFollower : MonoBehaviour
 
     void Start()
     {
-        // Record each follower's initial offset from the bone
         initialOffsets = new Vector3[followers.Length];
         initialRotations = new Quaternion[followers.Length];
 
@@ -25,7 +24,6 @@ public class BoneFollower : MonoBehaviour
     {
         for (int i = 0; i < followers.Length; i++)
         {
-            // Apply bone movement while keeping offset
             followers[i].position = targetBone.position + targetBone.rotation * initialOffsets[i];
             followers[i].rotation = targetBone.rotation * initialRotations[i];
         }

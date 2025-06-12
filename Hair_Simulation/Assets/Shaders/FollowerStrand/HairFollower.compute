@@ -39,8 +39,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
     uint vertexCount = info.vertexCount;
     uint followerStart = info.followerStartIndex;
 
-    // Golden angle spiral (better disk coverage)
-    float goldenAngle = 2.39996323; // radians (~137.5 degrees)
+    float goldenAngle = 2.39996323; 
     float followerAngle = followerIndex * goldenAngle;
     float r = sqrt((float) (followerIndex + 1) / (float) (followerCount + 1));
 

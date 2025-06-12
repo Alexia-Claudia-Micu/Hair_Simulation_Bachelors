@@ -17,14 +17,12 @@ public static class HairGenerationUtil
         bool isRoot = true;
 
         float radius = curlDiameter;
-        float fullCircle = Mathf.PI * 2f; // 360 degrees in radians
+        float fullCircle = Mathf.PI * 2f;
         float totalCurl = curlFrequency * fullCircle;
 
-        // Dynamically calculate segment length based on curl
-        float angularStep = totalCurl / (numberOfVertices - 1); // radians between points
-        float dynamicSegmentLength = radius * angularStep; // arc length
+        float angularStep = totalCurl / (numberOfVertices - 1);
+        float dynamicSegmentLength = radius * angularStep; 
 
-        // If diameter is very small (almost straight), fallback to base length
         if (dynamicSegmentLength < baseSegmentLength * 0.3f)
             dynamicSegmentLength = baseSegmentLength * 0.3f;
 
@@ -65,12 +63,11 @@ public static class HairGenerationUtil
         {
             bool isRoot = (i == 0);
 
-            // Directional angle estimation (between this and next point)
             float angle = 0f;
             if (i < vertexPositions.Count - 1)
             {
                 Vector3 dir = vertexPositions[i + 1] - vertexPositions[i];
-                angle = Mathf.Atan2(dir.z, dir.x); // assumes XZ plane curl
+                angle = Mathf.Atan2(dir.z, dir.x); 
             }
             else if (i > 0)
             {

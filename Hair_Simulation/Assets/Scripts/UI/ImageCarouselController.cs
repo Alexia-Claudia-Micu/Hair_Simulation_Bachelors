@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using TMPro;
-using UnityEngine.EventSystems;
 
 public class ImageCarouselController : MonoBehaviour
 {
@@ -16,7 +15,6 @@ public class ImageCarouselController : MonoBehaviour
     public VideoPlayer videoPlayer;
     public Button playButton;
     public Button pauseButton;
-    public Slider scrubberSlider;
     public TMP_Text currentTimeText;
     public TMP_Text totalTimeText;
 
@@ -28,7 +26,6 @@ public class ImageCarouselController : MonoBehaviour
 
     private Sprite[] loadedImages;
     private int currentIndex = 0;
-    private bool isDraggingSlider = false;
 
     void Start()
     {
@@ -63,20 +60,11 @@ public class ImageCarouselController : MonoBehaviour
 
         playButton.onClick.AddListener(() => videoPlayer.Play());
         pauseButton.onClick.AddListener(() => videoPlayer.Pause());
-
-        scrubberSlider.minValue = 0f;
-        scrubberSlider.maxValue = 1f;
-        scrubberSlider.onValueChanged.AddListener(OnScrubberChanged);
     }
 
     void Update()
     {
         if (videoPlayer.clip == null) return;
-
-        if (!isDraggingSlider && videoPlayer.isPlaying)
-        {
-            scrubberSlider.value = (float)(videoPlayer.time / videoPlayer.clip.length);
-        }
 
         currentTimeText.text = FormatTime(videoPlayer.time);
 
@@ -122,33 +110,6 @@ public class ImageCarouselController : MonoBehaviour
         else
         {
             Debug.LogWarning($"Video '{videoName}' not found in Resources/{videoFolder}");
-        }
-    }
-
-    public void OnScrubberChanged(float value)
-    {
-        if (videoPlayer.clip == null || !isDraggingSlider) return;
-
-        double targetTime = value * videoPlayer.clip.length;
-        videoPlayer.time = targetTime;
-        Debug.Log($"[ScrubberChanged] Set video time to {targetTime:F2}");
-    }
-
-    public void OnBeginDrag()
-    {
-        isDraggingSlider = true;
-        Debug.Log("[BeginDrag] Started dragging scrubber.");
-    }
-
-    public void OnEndDrag()
-    {
-        isDraggingSlider = false;
-
-        if (videoPlayer.clip != null)
-        {
-            double targetTime = scrubberSlider.value * videoPlayer.clip.length;
-            videoPlayer.time = targetTime;
-            Debug.Log($"[EndDrag] Set video time to {targetTime:F2}");
         }
     }
 

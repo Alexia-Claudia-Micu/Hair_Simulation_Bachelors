@@ -3,52 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\assets\\components\\hairsimimported.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|solutionrelative:assets\\components\\hairsimimported.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\HairSimCore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|solutionrelative:Assets\\Components\\HairSimCore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|c:\\users\\alexi\\documents\\github\\hair_simulation_bachelors\\hair_simulation\\assets\\components\\hairsim.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|solutionrelative:assets\\components\\hairsim.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\assets\\objects\\strandvertex.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|solutionrelative:assets\\objects\\strandvertex.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\assets\\objects\\strandspring.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|solutionrelative:assets\\objects\\strandspring.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\assets\\components\\hairstrand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|solutionrelative:assets\\components\\hairstrand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\assets\\shaders\\followerstrand\\hairfollower.compute||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|solutionrelative:assets\\shaders\\followerstrand\\hairfollower.compute||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\assets\\components\\hairmesh.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|solutionrelative:assets\\components\\hairmesh.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Shaders\\FollowerStrand\\HairFollowerShader.shader||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|solutionrelative:Assets\\Shaders\\FollowerStrand\\HairFollowerShader.shader||{3B902123-F8A7-4915-9F01-361F908088D0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Shaders\\FollowerStrand\\HairFollowerRibbonShader.shader||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|solutionrelative:Assets\\Shaders\\FollowerStrand\\HairFollowerRibbonShader.shader||{3B902123-F8A7-4915-9F01-361F908088D0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Scripts\\Utils\\Constants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\Utils\\Constants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\SkinnedMeshColliderUpdater.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Components\\SkinnedMeshColliderUpdater.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|c:\\users\\alexi\\documents\\github\\hair_simulation_bachelors\\hair_simulation\\assets\\scripts\\settings\\constants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50E32680-F3B4-3E75-2AB3-47867B07A473}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\settings\\constants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -63,148 +19,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "HairSimImported.cs",
-              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\HairSimImported.cs",
-              "RelativeDocumentMoniker": "Assets\\Components\\HairSimImported.cs",
-              "ToolTip": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\HairSimImported.cs",
-              "RelativeToolTip": "Assets\\Components\\HairSimImported.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-10T13:35:34.638Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "HairSim.cs",
-              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\HairSim.cs",
-              "RelativeDocumentMoniker": "Assets\\Components\\HairSim.cs",
-              "ToolTip": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\HairSim.cs",
-              "RelativeToolTip": "Assets\\Components\\HairSim.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAdAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-10T13:33:57.985Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "StrandVertex.cs",
-              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Objects\\StrandVertex.cs",
-              "RelativeDocumentMoniker": "Assets\\Objects\\StrandVertex.cs",
-              "ToolTip": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Objects\\StrandVertex.cs",
-              "RelativeToolTip": "Assets\\Objects\\StrandVertex.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAACAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-10T13:23:46.396Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "StrandSpring.cs",
-              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Objects\\StrandSpring.cs",
-              "RelativeDocumentMoniker": "Assets\\Objects\\StrandSpring.cs",
-              "ToolTip": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Objects\\StrandSpring.cs",
-              "RelativeToolTip": "Assets\\Objects\\StrandSpring.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-10T13:18:58.104Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
               "Title": "Constants.cs",
-              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Scripts\\Utils\\Constants.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Utils\\Constants.cs",
-              "ToolTip": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Scripts\\Utils\\Constants.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Utils\\Constants.cs",
-              "ViewState": "AgIAACoAAAAAAAAAAAAcwEgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-03T16:52:07.559Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "HairMesh.cs",
-              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\HairMesh.cs",
-              "RelativeDocumentMoniker": "Assets\\Components\\HairMesh.cs",
-              "ToolTip": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\HairMesh.cs",
-              "RelativeToolTip": "Assets\\Components\\HairMesh.cs",
-              "ViewState": "AgIAAJoAAAAAAAAAAAAowKsAAAAuAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-03T16:19:23.62Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "HairFollowerShader.shader",
-              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Shaders\\FollowerStrand\\HairFollowerShader.shader",
-              "RelativeDocumentMoniker": "Assets\\Shaders\\FollowerStrand\\HairFollowerShader.shader",
-              "ToolTip": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Shaders\\FollowerStrand\\HairFollowerShader.shader",
-              "RelativeToolTip": "Assets\\Shaders\\FollowerStrand\\HairFollowerShader.shader",
-              "ViewState": "AgIAAAEAAAAAAAAAAAAswCEAAAADAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002777|",
-              "WhenOpened": "2025-06-03T16:15:43.194Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "HairFollowerRibbonShader.shader",
-              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Shaders\\FollowerStrand\\HairFollowerRibbonShader.shader",
-              "RelativeDocumentMoniker": "Assets\\Shaders\\FollowerStrand\\HairFollowerRibbonShader.shader",
-              "ToolTip": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Shaders\\FollowerStrand\\HairFollowerRibbonShader.shader",
-              "RelativeToolTip": "Assets\\Shaders\\FollowerStrand\\HairFollowerRibbonShader.shader",
-              "ViewState": "AgIAAEIAAAAAAAAAAAAswGIAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002777|",
-              "WhenOpened": "2025-06-03T16:15:39.819Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "HairFollower.compute",
-              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Shaders\\FollowerStrand\\HairFollower.compute",
-              "RelativeDocumentMoniker": "Assets\\Shaders\\FollowerStrand\\HairFollower.compute",
-              "ToolTip": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Shaders\\FollowerStrand\\HairFollower.compute",
-              "RelativeToolTip": "Assets\\Shaders\\FollowerStrand\\HairFollower.compute",
+              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Scripts\\Settings\\Constants.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Settings\\Constants.cs",
+              "ToolTip": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Scripts\\Settings\\Constants.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Settings\\Constants.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002777|",
-              "WhenOpened": "2025-06-03T16:15:33.785Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "SkinnedMeshColliderUpdater.cs",
-              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\SkinnedMeshColliderUpdater.cs",
-              "RelativeDocumentMoniker": "Assets\\Components\\SkinnedMeshColliderUpdater.cs",
-              "ToolTip": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\SkinnedMeshColliderUpdater.cs",
-              "RelativeToolTip": "Assets\\Components\\SkinnedMeshColliderUpdater.cs",
-              "ViewState": "AgIAADkAAAAAAAAAAAAQwFYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-24T14:13:57.795Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "HairStrand.cs",
-              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\HairStrand.cs",
-              "RelativeDocumentMoniker": "Assets\\Components\\HairStrand.cs",
-              "ToolTip": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\HairStrand.cs",
-              "RelativeToolTip": "Assets\\Components\\HairStrand.cs",
-              "ViewState": "AgIAACkBAAAAAAAAAAAQwEIBAABVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-24T14:11:31.142Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "HairSimCore.cs",
-              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\HairSimCore.cs",
-              "RelativeDocumentMoniker": "Assets\\Components\\HairSimCore.cs",
-              "ToolTip": "C:\\Users\\alexi\\Documents\\GitHub\\Hair_Simulation_Bachelors\\Hair_Simulation\\Assets\\Components\\HairSimCore.cs",
-              "RelativeToolTip": "Assets\\Components\\HairSimCore.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-24T13:55:38.681Z",
+              "WhenOpened": "2025-06-12T15:46:29.857Z",
               "EditorCaption": ""
             }
           ]

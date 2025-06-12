@@ -26,7 +26,7 @@ Shader "Unlit/HairFollowerShader"
 
             float4 frag() : SV_Target
             {
-                return float4(1, 0.5, 0.2, 1); // Orange color
+                return float4(1, 0.5, 0.2, 1); 
             }
             ENDCG
         }

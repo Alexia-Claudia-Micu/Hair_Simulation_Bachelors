@@ -3383,31 +3383,7 @@ MonoBehaviour:
   - eventID: 13
     callback:
       m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1355747772}
-          m_TargetAssemblyTypeName: ImageCarouselController, Assembly-CSharp
-          m_MethodName: OnBeginDrag
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-        - m_Target: {fileID: 1355747772}
-          m_TargetAssemblyTypeName: ImageCarouselController, Assembly-CSharp
-          m_MethodName: OnEndDrag
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
+        m_Calls: []
 --- !u!1 &1153478648
 GameObject:
   m_ObjectHideFlags: 0
@@ -3937,7 +3913,6 @@ MonoBehaviour:
   videoPlayer: {fileID: 1504592391}
   playButton: {fileID: 1802447761}
   pauseButton: {fileID: 1584387071}
-  scrubberSlider: {fileID: 1150419605}
   currentTimeText: {fileID: 880870992}
   totalTimeText: {fileID: 1928196982}
   resourceFolder: SimulationThumbnails
@@ -4448,13 +4423,14 @@ GameObject:
   - component: {fileID: 1504592393}
   - component: {fileID: 1504592392}
   - component: {fileID: 1504592391}
+  - component: {fileID: 1504592394}
   m_Layer: 5
   m_Name: VideoPlayerPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1504592390
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4555,6 +4531,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1504592389}
   m_CullTransparentMesh: 1
+--- !u!114 &1504592394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1504592389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45ca2ec37ae8dcd4e9459a31cebf5dea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  videoPlayer: {fileID: 1504592391}
+  scrubSlider: {fileID: 1150419605}
 --- !u!1 &1582366362
 GameObject:
   m_ObjectHideFlags: 0
@@ -4880,7 +4870,7 @@ RectTransform:
   m_Father: {fileID: 1582366363}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
